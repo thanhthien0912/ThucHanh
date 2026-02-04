@@ -14,10 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * MSSV: 2280603036
  */
 @SpringBootApplication
-public class BookstoreApplication {
+public class PhanThanhThienApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookstoreApplication.class, args);
+        SpringApplication.run(PhanThanhThienApplication.class, args);
     }
 
 }
