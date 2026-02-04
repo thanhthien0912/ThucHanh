@@ -1,0 +1,159 @@
+package com.phanthanhthien.cmp3025.bookstore.controller;
+
+import com.phanthanhthien.cmp3025.bookstore.entities.Category;
+import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
+
+/**
+ * CategoryController - Quản lý Danh mục
+ * 
+ * @author Phan Thanh Thien
+ * @version 1.0.0
+ */
+@Controller
+@RequestMapping("/danhmuc")
+public class CategoryController {
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    /**
+     * Xem danh sách tất cả danh mục
+     */
+    @GetMapping({"", "/"})
+    public String listCategories(Model model) {
+        model.addAttribute("pageTitle", "Quản lý Danh mục");
+        model.addAttribute("currentPage", "danhmuc");
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("totalCategories", categoryRepository.count());
+        return "danhmuc/index";
+    }
+
+    /**
+     * Hiển thị form thêm danh mục mới
+     */
+    @GetMapping("/them")
+    public String addCategoryForm(Model model) {
+        model.addAttribute("pageTitle", "Thêm danh mục mới");
+        model.addAttribute("currentPage", "danhmuc");
+        model.addAttribute("category", new Category());
+        return "danhmuc/form";
+    }
+
+    /**
+     * Xử lý thêm danh mục mới
+     */
+    @PostMapping("/them")
+    public String addCategory(
+            @Valid @ModelAttribute("category") Category category,
+            BindingResult result,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        
+        if (result.hasErrors()) {
+            model.addAttribute("pageTitle", "Thêm danh mục mới");
+            model.addAttribute("currentPage", "danhmuc");
+            return "danhmuc/form";
+        }
+
+        // Kiểm tra tên danh mục đã tồn tại chưa
+        if (categoryRepository.existsByNameIgnoreCase(category.getName())) {
+            result.rejectValue("name", "error.category", "Tên danh mục này đã tồn tại");
+            model.addAttribute("pageTitle", "Thêm danh mục mới");
+            model.addAttribute("currentPage", "danhmuc");
+            return "danhmuc/form";
+        }
+
+        categoryRepository.save(category);
+        redirectAttributes.addFlashAttribute("successMessage", 
+                "Thêm danh mục \"" + category.getName() + "\" thành công!");
+        
+        return "redirect:/danhmuc";
+    }
+
+    /**
+     * Hiển thị form sửa danh mục
+     */
+    @GetMapping("/sua/{id}")
+    public String editCategoryForm(@PathVariable String id, Model model, 
+                                  RedirectAttributes redirectAttributes) {
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        
+        if (categoryOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Không tìm thấy danh mục với ID: " + id);
+            return "redirect:/danhmuc";
+        }
+
+        model.addAttribute("pageTitle", "Sửa danh mục");
+        model.addAttribute("currentPage", "danhmuc");
+        model.addAttribute("category", categoryOpt.get());
+        model.addAttribute("isEdit", true);
+        
+        return "danhmuc/form";
+    }
+
+    /**
+     * Xử lý cập nhật danh mục
+     */
+    @PostMapping("/sua/{id}")
+    public String updateCategory(
+            @PathVariable String id,
+            @Valid @ModelAttribute("category") Category category,
+            BindingResult result,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        
+        if (result.hasErrors()) {
+            model.addAttribute("pageTitle", "Sửa danh mục");
+            model.addAttribute("currentPage", "danhmuc");
+            model.addAttribute("isEdit", true);
+            return "danhmuc/form";
+        }
+
+        Optional<Category> existingCategory = categoryRepository.findById(id);
+        if (existingCategory.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Không tìm thấy danh mục với ID: " + id);
+            return "redirect:/danhmuc";
+        }
+
+        category.setId(id);
+        category.onUpdate();
+        categoryRepository.save(category);
+        
+        redirectAttributes.addFlashAttribute("successMessage", 
+                "Cập nhật danh mục \"" + category.getName() + "\" thành công!");
+        
+        return "redirect:/danhmuc";
+    }
+
+    /**
+     * Xóa danh mục
+     */
+    @GetMapping("/xoa/{id}")
+    public String deleteCategory(@PathVariable String id, 
+                                RedirectAttributes redirectAttributes) {
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        
+        if (categoryOpt.isPresent()) {
+            categoryRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                    "Đã xóa danh mục \"" + categoryOpt.get().getName() + "\"");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Không tìm thấy danh mục với ID: " + id);
+        }
+        
+        return "redirect:/danhmuc";
+    }
+
+}

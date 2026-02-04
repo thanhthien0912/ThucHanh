@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">Quản lý Danh mục</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-tags me-2"></i>Quản lý Danh mục</h2>
+                <a th:href="@{/danhmuc/them}" class="btn btn-success">
+                    <i class="bi bi-plus-circle me-1"></i>Thêm danh mục
+                </a>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i><span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng số danh mục</h5>
+                            <h3 th:text="${totalCategories}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Table -->
+            <div class="card" th:if="${categories != null && !categories.isEmpty()}">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Mô tả</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="cat : ${categories}">
+                                    <td th:text="${cat.id}">1</td>
+                                    <td><strong th:text="${cat.name}">Tên danh mục</strong></td>
+                                    <td th:text="${cat.description}">Mô tả</td>
+                                    <td th:text="${#temporals.format(cat.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                                    <td>
+                                        <a th:href="@{/danhmuc/sua/{id}(id=${cat.id})}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a th:href="@{/danhmuc/xoa/{id}(id=${cat.id})}" 
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="text-center py-5" th:if="${categories == null || categories.isEmpty()}">
+                <i class="bi bi-tags display-1 text-muted"></i>
+                <h4 class="text-muted mt-3">Chưa có danh mục nào</h4>
+                <p class="text-muted">Tạo danh mục để phân loại sách</p>
+                <a th:href="@{/danhmuc/them}" class="btn btn-success">
+                    <i class="bi bi-plus-circle me-1"></i>Thêm danh mục đầu tiên
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+</body>
+</html>

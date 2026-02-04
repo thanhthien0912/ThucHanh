@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout :: head}"></head>
+
+<body>
+    <div th:replace="~{layout :: navbar}"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <!-- Icon thành công -->
+                        <div class="mb-4">
+                            <div class="rounded-circle bg-success d-inline-flex align-items-center justify-content-center"
+                                style="width: 100px; height: 100px;">
+                                <i class="bi bi-check-lg text-white" style="font-size: 50px;"></i>
+                            </div>
+                        </div>
+
+                        <h2 class="text-success mb-3">Đặt hàng thành công!</h2>
+                        <p class="text-muted mb-4">
+                            Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xác nhận.
+                        </p>
+
+                        <!-- Thông tin đơn hàng -->
+                        <div th:if="${order != null}" class="bg-light rounded p-4 mb-4 text-start">
+                            <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>Thông tin đơn hàng</h5>
+
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Mã đơn hàng:</div>
+                                <div class="col-7"><strong th:text="${order.id}">ORD-123</strong></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Phương thức:</div>
+                                <div class="col-7">
+                                    <span th:if="${order.paymentMethod == 'MOMO'}" class="badge bg-danger">
+                                        <img src="https://developers.momo.vn/v3/img/logo.svg" alt="MoMo"
+                                            style="width: 16px; filter: brightness(0) invert(1);"> MoMo
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Trạng thái:</div>
+                                <div class="col-7">
+                                    <span class="badge bg-success">✓ Đã thanh toán</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2" th:if="${order.momoTransId != null}">
+                                <div class="col-5 text-muted">Mã giao dịch:</div>
+                                <div class="col-7"><code th:text="${order.momoTransId}">TRANS-123</code></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-5 text-muted">Tổng tiền:</div>
+                                <div class="col-7">
+                                    <strong class="text-danger fs-5"
+                                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        0 đ
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sản phẩm đã mua -->
+                        <div th:if="${order != null && !order.items.isEmpty()}" class="text-start mb-4">
+                            <h6 class="mb-3"><i class="bi bi-bag-check me-2"></i>Sản phẩm đã mua</h6>
+                            <div class="list-group">
+                                <div th:each="item : ${order.items}"
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}" class="rounded"
+                                            style="width: 40px; height: 50px; object-fit: cover;">
+                                        <div>
+                                            <span th:text="${item.bookTitle}">Tên sách</span>
+                                            <br><small class="text-muted">x<span
+                                                    th:text="${item.quantity}">1</span></small>
+                                        </div>
+                                    </div>
+                                    <span class="text-danger"
+                                        th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        100,000 đ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút điều hướng -->
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a th:href="@{/}" class="btn btn-primary">
+                                <i class="bi bi-house me-1"></i>Về trang chủ
+                            </a>
+                            <a th:href="@{/sach}" class="btn btn-outline-primary">
+                                <i class="bi bi-book me-1"></i>Tiếp tục mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+
+</html>

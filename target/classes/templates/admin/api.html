@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">API Documentation</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-code-slash me-2"></i>API Documentation</h2>
+                <span class="badge bg-warning text-dark fs-6">ADMIN ONLY</span>
+            </div>
+
+            <!-- API Info -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Thông tin API</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Đang phát triển:</strong> API RESTful sẽ được triển khai trong các bước tiếp theo.
+                    </div>
+
+                    <h6 class="mt-4">Base URL</h6>
+                    <code class="bg-light p-2 rounded d-block">http://localhost:8080/api/v1</code>
+
+                    <h6 class="mt-4">Authentication</h6>
+                    <p>API sử dụng JWT Bearer token hoặc Basic Auth (đang phát triển)</p>
+                </div>
+            </div>
+
+            <!-- API Endpoints -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-book me-2"></i>Books API</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <span class="badge bg-success me-2">GET</span>
+                                    <code>/api/v1/books</code>
+                                    <small class="d-block text-muted">Lấy danh sách tất cả sách</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-success me-2">GET</span>
+                                    <code>/api/v1/books/{id}</code>
+                                    <small class="d-block text-muted">Lấy thông tin sách theo ID</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-primary me-2">POST</span>
+                                    <code>/api/v1/books</code>
+                                    <small class="d-block text-muted">Thêm sách mới</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-warning text-dark me-2">PUT</span>
+                                    <code>/api/v1/books/{id}</code>
+                                    <small class="d-block text-muted">Cập nhật thông tin sách</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-danger me-2">DELETE</span>
+                                    <code>/api/v1/books/{id}</code>
+                                    <small class="d-block text-muted">Xóa sách</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-tags me-2"></i>Categories API</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <span class="badge bg-success me-2">GET</span>
+                                    <code>/api/v1/categories</code>
+                                    <small class="d-block text-muted">Lấy danh sách danh mục</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-success me-2">GET</span>
+                                    <code>/api/v1/categories/{id}</code>
+                                    <small class="d-block text-muted">Lấy thông tin danh mục</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-primary me-2">POST</span>
+                                    <code>/api/v1/categories</code>
+                                    <small class="d-block text-muted">Thêm danh mục mới</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-warning text-dark me-2">PUT</span>
+                                    <code>/api/v1/categories/{id}</code>
+                                    <small class="d-block text-muted">Cập nhật danh mục</small>
+                                </div>
+                                <div class="list-group-item">
+                                    <span class="badge bg-danger me-2">DELETE</span>
+                                    <code>/api/v1/categories/{id}</code>
+                                    <small class="d-block text-muted">Xóa danh mục</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Documentation -->
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>API Documentation</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Base URL</h6>
+                    <code class="bg-light p-2 rounded d-block mb-3">http://localhost:8080/api/v1</code>
+                    
+                    <h6>Test bằng cURL</h6>
+                    <div class="bg-dark text-light p-3 rounded">
+                        <code style="color: #7ee787;">
+                            # Lấy danh sách sách<br>
+                            curl http://localhost:8080/api/v1/books<br><br>
+                            # Thêm sách mới<br>
+                            curl -X POST http://localhost:8080/api/v1/books \<br>
+                            &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+                            &nbsp;&nbsp;-d '{"title":"Test","author":"Test","price":100000}'
+                        </code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Test Panel -->
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Test API Trực Tiếp</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <button onclick="testGetBooks()" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-book me-1"></i>GET /api/v1/books
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button onclick="testGetCategories()" class="btn btn-outline-success w-100">
+                                <i class="bi bi-tags me-1"></i>GET /api/v1/categories
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button onclick="testCreateBook()" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-plus-circle me-1"></i>POST /api/v1/books
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Result Display -->
+                    <div class="mt-4">
+                        <label class="form-label fw-bold">Kết quả:</label>
+                        <pre id="apiResult" class="bg-dark text-light p-3 rounded" style="min-height: 200px; max-height: 400px; overflow-y: auto;">Nhấn nút ở trên để test API...</pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+    <!-- API Test Scripts -->
+    <script>
+        const API_BASE = '/api/v1';
+        const resultDisplay = document.getElementById('apiResult');
+
+        function displayResult(title, data) {
+            const timestamp = new Date().toLocaleTimeString();
+            resultDisplay.textContent = `[${timestamp}] ${title}\n\n${JSON.stringify(data, null, 2)}`;
+        }
+
+        function displayError(title, error) {
+            const timestamp = new Date().toLocaleTimeString();
+            resultDisplay.textContent = `[${timestamp}] ${title}\n\n❌ Lỗi: ${error}`;
+        }
+
+        // Test GET /api/v1/books
+        async function testGetBooks() {
+            try {
+                resultDisplay.textContent = 'Đang gọi API...';
+                const response = await fetch(`${API_BASE}/books`);
+                const data = await response.json();
+                displayResult('GET /api/v1/books', data);
+            } catch (error) {
+                displayError('GET /api/v1/books', error.message);
+            }
+        }
+
+        // Test GET /api/v1/categories
+        async function testGetCategories() {
+            try {
+                resultDisplay.textContent = 'Đang gọi API...';
+                const response = await fetch(`${API_BASE}/categories`);
+                const data = await response.json();
+                displayResult('GET /api/v1/categories', data);
+            } catch (error) {
+                displayError('GET /api/v1/categories', error.message);
+            }
+        }
+
+        // Test POST /api/v1/books
+        async function testCreateBook() {
+            try {
+                resultDisplay.textContent = 'Đang gọi API...';
+                const newBook = {
+                    title: "Sách Test " + new Date().getTime(),
+                    author: "Ngườ Test",
+                    price: 150000,
+                    category: "Test",
+                    description: "Đây là sách test được tạo từ API"
+                };
+                
+                const response = await fetch(`${API_BASE}/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newBook)
+                });
+                
+                const data = await response.json();
+                displayResult('POST /api/v1/books', data);
+            } catch (error) {
+                displayError('POST /api/v1/books', error.message);
+            }
+        }
+    </script>
+
+</body>
+</html>

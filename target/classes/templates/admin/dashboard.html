@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">Bảng điều khiển Admin</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-speedometer2 me-2"></i>Bảng điều khiển Admin</h2>
+                <span class="badge bg-warning text-dark fs-6">ADMIN ONLY</span>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Tổng số sách</h6>
+                                    <h3 class="mb-0" th:text="${totalBooks}">0</h3>
+                                </div>
+                                <i class="bi bi-journal-bookmark fs-1 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Danh mục</h6>
+                                    <h3 class="mb-0" th:text="${totalCategories}">0</h3>
+                                </div>
+                                <i class="bi bi-tags fs-1 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Đơn hàng</h6>
+                                    <h3 class="mb-0" th:text="${totalOrders}">0</h3>
+                                </div>
+                                <i class="bi bi-cart-check fs-1 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Người dùng</h6>
+                                    <h3 class="mb-0" th:text="${totalUsers}">0</h3>
+                                </div>
+                                <i class="bi bi-people fs-1 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Thao tác nhanh</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                <a th:href="@{/sach/them}" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-plus-circle me-2"></i>Thêm sách mới
+                                </a>
+                                <a th:href="@{/danhmuc/them}" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-plus-circle me-2"></i>Thêm danh mục
+                                </a>
+                                <a th:href="@{/nguoidung}" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-people me-2"></i>Quản lý ngườ dùng
+                                </a>
+                                <a th:href="@{/apidocs}" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-code-slash me-2"></i>Xem API Documentation
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Thông tin hệ thống</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Spring Boot 3.2.2
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Thymeleaf Template Engine
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Spring Security 6.x
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-database me-2"></i>
+                                    MongoDB (Chờ kết nối)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+</body>
+
+</html>

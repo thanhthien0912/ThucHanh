@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout :: head}"></head>
+
+<body>
+    <div th:replace="~{layout :: navbar}"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <!-- Icon thất bại -->
+                        <div class="mb-4">
+                            <div class="rounded-circle bg-danger d-inline-flex align-items-center justify-content-center"
+                                style="width: 100px; height: 100px;">
+                                <i class="bi bi-x-lg text-white" style="font-size: 50px;"></i>
+                            </div>
+                        </div>
+
+                        <h2 class="text-danger mb-3">Thanh toán thất bại!</h2>
+                        <p class="text-muted mb-4">
+                            Rất tiếc, giao dịch thanh toán không thành công. Vui lòng thử lại.
+                        </p>
+
+                        <!-- Thông tin đơn hàng -->
+                        <div th:if="${order != null}" class="bg-light rounded p-4 mb-4 text-start">
+                            <h5 class="mb-3"><i class="bi bi-exclamation-circle me-2"></i>Thông tin lỗi</h5>
+
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Mã đơn hàng:</div>
+                                <div class="col-7"><strong th:text="${order.id}">ORD-123</strong></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Trạng thái:</div>
+                                <div class="col-7">
+                                    <span class="badge bg-danger">✗ Thất bại</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 text-muted">Tổng tiền:</div>
+                                <div class="col-7">
+                                    <strong class="text-danger"
+                                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        0 đ
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gợi ý -->
+                        <div class="alert alert-warning text-start mb-4">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            <strong>Gợi ý:</strong> Hãy kiểm tra số dư ví MoMo hoặc thử lại sau ít phút.
+                        </div>
+
+                        <!-- Nút điều hướng -->
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a th:href="@{/thanhtoan}" class="btn btn-primary">
+                                <i class="bi bi-arrow-repeat me-1"></i>Thử lại
+                            </a>
+                            <a th:href="@{/giohang}" class="btn btn-outline-secondary">
+                                <i class="bi bi-cart me-1"></i>Về giỏ hàng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--
+    Home Page - Trang chủ Hệ thống Quản lý Nhà sách
+    Author: Phan Thanh Thien - MSSV: 2280603036
+    Course: CMP3025 - J2EE
+-->
+
+<head>
+    <!-- Include common head fragment -->
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle} ?: 'Trang chủ - Hệ thống Quản lý Nhà sách'">Trang chủ</title>
+
+    <!-- Page-specific styles -->
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .admin-card {
+            border: 2px solid #ffc107;
+        }
+
+        .admin-card .feature-icon {
+            color: #ffc107;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Include Header -->
+    <header th:replace="~{layout :: header}"></header>
+
+    <!-- Include Navbar -->
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================ -->
+    <main class="flex-grow-1">
+
+        <!-- ============================================ -->
+        <!-- HERO SECTION - Thông tin nhận diện -->
+        <!-- ============================================ -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-4 fw-bold mb-3">
+                            <i class="bi bi-book me-3"></i>Hệ thống Quản lý Nhà sách
+                        </h1>
+                        <p class="lead mb-4">
+                            Ứng dụng quản lý toàn diện cho cửa hàng sách, hỗ trợ quản lý sách,
+                            danh mục, đơn hàng và người dùng một cách hiệu quả.
+                        </p>
+
+                        <!-- Thông tin sinh viên -->
+                        <div class="bg-white bg-opacity-10 rounded p-3 d-inline-block">
+                            <div class="row text-white">
+                                <div class="col-auto">
+                                    <i class="bi bi-person-badge me-2"></i>
+                                    <strong>Sinh viên:</strong> Phan Thanh Thien
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-card-text me-2"></i>
+                                    <strong>MSSV:</strong> 2280603036
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-journal-code me-2"></i>
+                                    <strong>Môn học:</strong> CMP3025
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center d-none d-lg-block">
+                        <i class="bi bi-journal-bookmark display-1"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- THÔNG BÁO (Alerts) -->
+        <!-- ============================================ -->
+        <div class="container mt-4">
+            <!-- Thông báo đăng xuất thành công -->
+            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>Bạn đã đăng xuất thành công!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Thông báo chào mừng khi đăng nhập -->
+            <div sec:authorize="isAuthenticated()" class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                Chào mừng <strong sec:authentication="name">User</strong>!
+                Bạn đã đăng nhập vào hệ thống.
+                <span sec:authorize="hasRole('ADMIN')" class="badge bg-warning text-dark ms-2">
+                    Quyền quản trị viên
+                </span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SÁCH TRƯNG BÀY (Book Showcase) -->
+        <!-- ============================================ -->
+        <section class="py-4 bg-light" th:if="${books != null && !books.isEmpty()}">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-book me-2"></i>Sách nổi bật
+                    </h3>
+                    <a th:href="@{/sach}" class="btn btn-outline-primary btn-sm">
+                        Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2" th:each="book : ${books}">
+                        <div class="card h-100 book-card">
+                            <!-- Hình ảnh sách -->
+                            <div class="position-relative" style="height: 140px; overflow: hidden;">
+                                <!-- Nếu có hình ảnh -->
+                                <img th:if="${book.imageUrl != null && !book.imageUrl.isEmpty()}"
+                                    th:src="${book.imageUrl}" th:alt="${book.title}" class="card-img-top w-100 h-100"
+                                    style="object-fit: cover;"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <!-- Placeholder nếu không có hình -->
+                                <div th:if="${book.imageUrl == null || book.imageUrl.isEmpty()}"
+                                    class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                                    style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                    <i class="bi bi-book fs-1"></i>
+                                </div>
+                                <!-- Hidden placeholder for error fallback -->
+                                <div class="w-100 h-100 align-items-center justify-content-center text-white position-absolute top-0"
+                                    style="background: linear-gradient(135deg, #667eea, #764ba2); display: none;">
+                                    <i class="bi bi-book fs-1"></i>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-2">
+                                <h6 class="card-title mb-1 text-truncate" th:text="${book.title}"
+                                    th:title="${book.title}">
+                                    Tên sách
+                                </h6>
+                                <p class="card-text small text-muted mb-1 text-truncate" th:text="${book.author}">
+                                    Tác giả
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-danger fw-bold small"
+                                        th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        100,000 đ
+                                    </span>
+                                    <span th:class="${book.stock > 0} ? 'badge bg-success' : 'badge bg-danger'"
+                                        th:text="${book.stock > 0} ? 'Còn hàng' : 'Hết hàng'"
+                                        style="font-size: 0.65rem;">
+                                        Còn hàng
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-footer bg-transparent border-0 p-2 pt-0">
+                                <div class="d-flex gap-1">
+                                    <a th:href="@{/sach/chi-tiet/{id}(id=${book.id})}"
+                                        class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <form th:action="@{/giohang/them}" method="post" class="flex-grow-1"
+                                        sec:authorize="isAuthenticated()">
+                                        <input type="hidden" name="bookId" th:value="${book.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100"
+                                            th:disabled="${book.stock <= 0}">
+                                            <i class="bi bi-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                    <a th:href="@{/dangnhap}" class="btn btn-primary btn-sm flex-grow-1"
+                                        sec:authorize="!isAuthenticated()">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- DANH MỤC (Categories) -->
+        <!-- ============================================ -->
+        <section class="py-4" th:if="${categories != null && !categories.isEmpty()}">
+            <div class="container">
+                <h3 class="mb-3">
+                    <i class="bi bi-tags me-2"></i>Danh mục sách
+                </h3>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a th:each="cat : ${categories}" th:href="@{/sach(categoryId=${cat.id})}"
+                        class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-folder me-1"></i>
+                        <span th:text="${cat.name}">Danh mục</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- NHÓM CHỨC NĂNG (Functional Groups) -->
+        <!-- ============================================ -->
+        <section class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-5">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>Các chức năng chính
+                </h2>
+
+                <div class="row g-4">
+
+                    <!-- ===== 1. Quản lý Sách ===== -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card feature-card shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-primary">
+                                    <i class="bi bi-journal-bookmark"></i>
+                                </div>
+                                <h4 class="card-title">Quản lý Sách</h4>
+                                <p class="card-text text-muted">
+                                    Xem, thêm, sửa, xóa thông tin sách trong hệ thống.
+                                    Quản lý tồn kho và theo dõi số lượng.
+                                </p>
+                                <a th:href="@{/sach}" class="btn btn-primary">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 2. Quản lý Danh mục ===== -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card feature-card shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-success">
+                                    <i class="bi bi-tags"></i>
+                                </div>
+                                <h4 class="card-title">Quản lý Danh mục</h4>
+                                <p class="card-text text-muted">
+                                    Tổ chức sách theo danh mục, thể loại.
+                                    Dễ dàng phân loại và tìm kiếm sách.
+                                </p>
+                                <a th:href="@{/danhmuc}" class="btn btn-success">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 3. Mua hàng ===== -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card feature-card shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon text-info">
+                                    <i class="bi bi-cart-check"></i>
+                                </div>
+                                <h4 class="card-title">Mua hàng</h4>
+                                <p class="card-text text-muted">
+                                    Đặt hàng, quản lý giỏ hàng và theo dõi đơn hàng.
+                                    Thanh toán nhanh chóng và tiện lợi.
+                                </p>
+
+                                <!-- Chưa đăng nhập -->
+                                <span sec:authorize="!isAuthenticated()">
+                                    <a th:href="@{/dangnhap}" class="btn btn-outline-info">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập để mua
+                                    </a>
+                                </span>
+
+                                <!-- Đã đăng nhập -->
+                                <span sec:authorize="isAuthenticated()">
+                                    <a th:href="@{/muahang}" class="btn btn-info text-white">
+                                        <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 4. Quản lý Người dùng (ADMIN ONLY) ===== -->
+                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+                        <div class="card feature-card shadow-sm h-100 admin-card">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <h4 class="card-title">Quản lý Người dùng</h4>
+                                <p class="card-text text-muted">
+                                    Quản lý tài khoản người dùng, phân quyền và
+                                    thiết lập vai trò trong hệ thống.
+                                </p>
+                                <a th:href="@{/nguoidung}" class="btn btn-warning">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                </a>
+                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 5. Quản trị (ADMIN ONLY) ===== -->
+                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+                        <div class="card feature-card shadow-sm h-100 admin-card">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                                <h4 class="card-title">Quản trị (Admin)</h4>
+                                <p class="card-text text-muted">
+                                    Bảng điều khiển quản trị viên. Thống kê, báo cáo
+                                    và các cài đặt hệ thống.
+                                </p>
+                                <a th:href="@{/quantri}" class="btn btn-warning">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                </a>
+                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 6. API / Tài liệu (ADMIN ONLY) ===== -->
+                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+                        <div class="card feature-card shadow-sm h-100 admin-card">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon">
+                                    <i class="bi bi-code-slash"></i>
+                                </div>
+                                <h4 class="card-title">API / Tài liệu</h4>
+                                <p class="card-text text-muted">
+                                    Tài liệu API RESTful, Swagger UI và hướng dẫn
+                                    tích hợp cho developer.
+                                </p>
+                                <a th:href="@{/apidocs}" class="btn btn-warning">
+                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                </a>
+                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Thông báo cho người chưa đăng nhập về các chức năng bị ẩn -->
+                <div sec:authorize="!isAuthenticated()" class="mt-5">
+                    <div class="alert alert-secondary text-center">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> Một số chức năng yêu cầu đăng nhập để sử dụng.
+                        <a th:href="@{/dangnhap}" class="alert-link">Đăng nhập ngay</a> để trải nghiệm đầy đủ!
+                    </div>
+                </div>
+
+                <!-- Thông báo cho User thường về các chức năng Admin -->
+                <div sec:authorize="isAuthenticated() and !hasRole('ADMIN')" class="mt-5">
+                    <div class="alert alert-secondary text-center">
+                        <i class="bi bi-shield-exclamation me-2"></i>
+                        <strong>Lưu ý:</strong> Một số chức năng quản trị chỉ dành cho tài khoản Admin.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- QUICK STATS SECTION -->
+        <!-- ============================================ -->
+        <section class="bg-light py-5">
+            <div class="container">
+                <h3 class="text-center mb-4">
+                    <i class="bi bi-bar-chart me-2"></i>Thống kê nhanh từ MongoDB
+                </h3>
+                <div class="row text-center g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm">
+                            <div class="display-6 text-primary fw-bold" th:text="${totalBooks}">0</div>
+                            <div class="text-muted">Tổng số sách</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm">
+                            <div class="display-6 text-success fw-bold" th:text="${totalCategories}">0</div>
+                            <div class="text-muted">Danh mục</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm">
+                            <div class="display-6 text-info fw-bold" th:text="${totalOrders}">0</div>
+                            <div class="text-muted">Đơn hàng</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm">
+                            <div class="display-6 text-warning fw-bold" th:text="${totalUsers}">0</div>
+                            <div class="text-muted">Người dùng</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-success mt-3 small">
+                    <i class="bi bi-check-circle-fill me-1"></i>
+                    Đã kết nối MongoDB - Dữ liệu được lưu trữ thực
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Include Footer -->
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <!-- Include Scripts -->
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+    <!-- Page-specific scripts -->
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(function (alert) {
+                setTimeout(function () {
+                    if (alert && typeof bootstrap !== 'undefined') {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            });
+        });
+    </script>
+
+</body>
+
+</html>

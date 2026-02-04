@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">Chi tiết sách</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container py-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/sach}">Quản lý Sách</a></li>
+                    <li class="breadcrumb-item active" th:text="${book.title}">Chi tiết sách</li>
+                </ol>
+            </nav>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- Book Image -->
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div th:if="${book.imageUrl != null}">
+                                <img th:src="${book.imageUrl}" class="img-fluid rounded" alt="Book Cover" style="max-height: 300px;">
+                            </div>
+                            <div th:if="${book.imageUrl == null}" class="py-5">
+                                <i class="bi bi-journal-bookmark display-1 text-muted"></i>
+                                <p class="text-muted mt-3">Không có hình ảnh</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <!-- Book Details -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0" th:text="${book.title}">Tên sách</h4>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td width="30%"><strong>Tác giả:</strong></td>
+                                    <td th:text="${book.author}">Tác giả</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Giá:</strong></td>
+                                    <td class="text-danger fw-bold" 
+                                        th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tồn kho:</strong></td>
+                                    <td>
+                                        <span th:class="${book.stock > 0} ? 'badge bg-success' : 'badge bg-danger'"
+                                              th:text="${book.stock} + ' cuốn'">10 cuốn</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${category != null}">
+                                    <td><strong>Danh mục:</strong></td>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${category.name}">Danh mục</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mô tả:</strong></td>
+                                    <td th:text="${book.description} ?: 'Không có mô tả'">Mô tả</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ngày tạo:</strong></td>
+                                    <td th:text="${#temporals.format(book.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cập nhật lần cuối:</strong></td>
+                                    <td th:text="${#temporals.format(book.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                                </tr>
+                            </table>
+
+                            <div class="d-flex gap-2 mt-4">
+                                <a th:href="@{/sach/sua/{id}(id=${book.id})}" class="btn btn-warning">
+                                    <i class="bi bi-pencil me-1"></i>Sửa
+                                </a>
+                                <a th:href="@{/sach/xoa/{id}(id=${book.id})}" 
+                                   class="btn btn-danger"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sách này?')">
+                                    <i class="bi bi-trash me-1"></i>Xóa
+                                </a>
+                                <a th:href="@{/sach}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i>Quay lại
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+</body>
+</html>

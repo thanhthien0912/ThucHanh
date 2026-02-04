@@ -1,0 +1,86 @@
+# ============================================
+# Bookstore Application Configuration
+# Author: Phan Thanh Thien - MSSV: 2280603036
+# Course: CMP3025 - J2EE
+# ============================================
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# Spring Configuration
+spring:
+  application:
+    name: bookstore-management
+
+  # Thymeleaf Configuration
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false  # Disable cache for development
+
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/bookstore_db
+      # Alternative configuration:
+      # host: localhost
+      # port: 27017
+      # database: bookstore_db
+      # username: 
+      # password: 
+
+  # DevTools Configuration
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  # OAuth2 Login Configuration (Google)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.phanthanhthien.cmp3025.bookstore: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.data.mongodb: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Application Custom Properties
+app:
+  name: "Hệ thống Quản lý Nhà sách"
+  version: "1.0.0"
+  author: "Phan Thanh Thien"
+  mssv: "2280603036"
+  course: "CMP3025"
+
+# MoMo Payment Configuration (UAT/Sandbox)
+momo:
+  partner-code: MOMOBKUN20180529
+  access-key: klm05TvNBzhg7h7j
+  secret-key: at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa
+  endpoint: https://test-payment.momo.vn/v2/gateway/api/create
+  redirect-url: http://localhost:8080/thanhtoan/momo/callback
+  ipn-url: http://localhost:8080/thanhtoan/momo/notify
