@@ -1,11 +1,14 @@
 package com.phanthanhthien.cmp3025.bookstore.controller.api;
 
+import com.phanthanhthien.cmp3025.bookstore.entities.Book;
 import com.phanthanhthien.cmp3025.bookstore.entities.Category;
+import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.Optional;
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/categories")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -25,6 +29,23 @@ public class CategoryRestController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    /**
+     * GET /api/v1/categories/by-category/{categoryId}/books - Lấy danh sách sách
+     * thuộc danh mục
+     */
+    @GetMapping("/by-category/{categoryId}/books")
+    public ResponseEntity<List<Book>> getBooksByCategoryId(@PathVariable Long categoryId) {
+        log.info("Fetching books for categoryId: {}", categoryId);
+        List<Book> books = bookRepository.findByCategoryId(categoryId);
+        log.info("Found {} books for categoryId {}", books.size(), categoryId);
+        books.forEach(
+                b -> log.info("Book: id={}, title={}, categoryId={}", b.getId(), b.getTitle(), b.getCategoryId()));
+        return ResponseEntity.ok(books);
+    }
 
     /**
      * GET /api/v1/categories - Lấy danh sách tất cả danh mục

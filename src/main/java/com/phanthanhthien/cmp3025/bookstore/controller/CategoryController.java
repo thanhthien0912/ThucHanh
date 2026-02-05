@@ -1,6 +1,8 @@
 package com.phanthanhthien.cmp3025.bookstore.controller;
 
+import com.phanthanhthien.cmp3025.bookstore.entities.Book;
 import com.phanthanhthien.cmp3025.bookstore.entities.Category;
+import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
 import jakarta.validation.Valid;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * CategoryController - Quản lý Danh mục
@@ -30,27 +33,30 @@ public class CategoryController {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
     private CounterService counterService;
 
     /**
      * Xem danh sách tất cả danh mục
      */
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public String listCategories(Model model) {
         log.info("Loading all categories...");
         List<Category> categories = categoryRepository.findAll();
         log.info("Found {} categories", categories.size());
         categories.forEach(cat -> log.info("Category: ID={}, Name={}", cat.getId(), cat.getName()));
-        
+
         model.addAttribute("pageTitle", "Quản lý Danh mục");
         model.addAttribute("currentPage", "danhmuc");
         model.addAttribute("categories", categories);
         model.addAttribute("totalCategories", categoryRepository.count());
-        
-        log.info("Model attributes - categories: {}, totalCategories: {}", 
+
+        log.info("Model attributes - categories: {}, totalCategories: {}",
                 model.containsAttribute("categories") ? categories.size() : "NULL",
                 model.getAttribute("totalCategories"));
-        
+
         return "danhmuc/index";
     }
 
@@ -74,7 +80,7 @@ public class CategoryController {
             BindingResult result,
             Model model,
             RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("pageTitle", "Thêm danh mục mới");
             model.addAttribute("currentPage", "danhmuc");
@@ -94,9 +100,9 @@ public class CategoryController {
         category.setId(newId);
 
         categoryRepository.save(category);
-        redirectAttributes.addFlashAttribute("successMessage", 
+        redirectAttributes.addFlashAttribute("successMessage",
                 "Thêm danh mục \"" + category.getName() + "\" thành công!");
-        
+
         return "redirect:/danhmuc";
     }
 
@@ -105,11 +111,11 @@ public class CategoryController {
      */
     @GetMapping("/sua/{id}")
     public String editCategoryForm(@PathVariable Long id, Model model,
-                                  RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
-        
+
         if (categoryOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy danh mục với ID: " + id);
             return "redirect:/danhmuc";
         }
@@ -118,7 +124,7 @@ public class CategoryController {
         model.addAttribute("currentPage", "danhmuc");
         model.addAttribute("category", categoryOpt.get());
         model.addAttribute("isEdit", true);
-        
+
         return "danhmuc/form";
     }
 
@@ -132,7 +138,7 @@ public class CategoryController {
             BindingResult result,
             Model model,
             RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("pageTitle", "Sửa danh mục");
             model.addAttribute("currentPage", "danhmuc");
@@ -142,7 +148,7 @@ public class CategoryController {
 
         Optional<Category> existingCategory = categoryRepository.findById(id);
         if (existingCategory.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy danh mục với ID: " + id);
             return "redirect:/danhmuc";
         }
@@ -150,30 +156,54 @@ public class CategoryController {
         category.setId(id);
         category.onUpdate();
         categoryRepository.save(category);
-        
-        redirectAttributes.addFlashAttribute("successMessage", 
+
+        redirectAttributes.addFlashAttribute("successMessage",
                 "Cập nhật danh mục \"" + category.getName() + "\" thành công!");
-        
+
         return "redirect:/danhmuc";
     }
 
     /**
-     * Xóa danh mục
+     * Xóa danh mục và các sách liên quan
      */
     @GetMapping("/xoa/{id}")
     public String deleteCategory(@PathVariable Long id,
-                                RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
-        
+
         if (categoryOpt.isPresent()) {
-            categoryRepository.deleteById(id);
-            redirectAttributes.addFlashAttribute("successMessage", 
-                    "Đã xóa danh mục \"" + categoryOpt.get().getName() + "\"");
+            Category category = categoryOpt.get();
+
+            // Tìm và xoá các sách thuộc danh mục này
+            List<Book> relatedBooks = bookRepository.findByCategoryId(id);
+            int bookCount = relatedBooks.size();
+
+            if (!relatedBooks.isEmpty()) {
+                // Lấy tên các sách bị xoá để hiển thị
+                String deletedBookTitles = relatedBooks.stream()
+                        .map(Book::getTitle)
+                        .collect(Collectors.joining(", "));
+
+                // Xoá tất cả sách liên quan
+                bookRepository.deleteAll(relatedBooks);
+
+                // Xoá danh mục
+                categoryRepository.deleteById(id);
+
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Đã xóa danh mục \"" + category.getName() + "\" cùng với " + bookCount + " sách: "
+                                + deletedBookTitles);
+            } else {
+                // Không có sách liên quan, chỉ xoá danh mục
+                categoryRepository.deleteById(id);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "Đã xóa danh mục \"" + category.getName() + "\"");
+            }
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy danh mục với ID: " + id);
         }
-        
+
         return "redirect:/danhmuc";
     }
 
