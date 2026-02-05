@@ -2,6 +2,7 @@ package com.phanthanhthien.cmp3025.bookstore.controller.api;
 
 import com.phanthanhthien.cmp3025.bookstore.entities.Book;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
+import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +28,9 @@ public class BookRestController {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CounterService counterService;
 
     /**
      * GET /api/v1/books - Lấy danh sách tất cả sách
@@ -67,6 +71,12 @@ public class BookRestController {
             if (book.getStock() == null) {
                 book.setStock(0);
             }
+
+            // Generate ID using CounterService
+            Long newId = counterService.getNextSequence("books");
+            book.setId(newId);
+            book.setCreatedAt(java.time.LocalDateTime.now());
+            book.setUpdatedAt(java.time.LocalDateTime.now());
 
             Book savedBook = bookRepository.save(book);
             return ResponseEntity.ok(savedBook);

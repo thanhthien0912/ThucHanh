@@ -41,7 +41,7 @@ public class CheckoutController {
     @GetMapping
     public String checkoutPage(Model model, Authentication authentication) {
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         String userId = authentication.getName();
@@ -64,7 +64,7 @@ public class CheckoutController {
     @PostMapping("/momo")
     public String payWithMomo(Authentication authentication, RedirectAttributes redirectAttributes) {
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         try {

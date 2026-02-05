@@ -197,8 +197,6 @@
                     const categoryId = this.dataset.id;
                     const categoryName = this.dataset.name;
 
-                    console.log('Delete clicked for category:', categoryId, categoryName);
-
                     // Reset modal state
                     categoryNameSpan.textContent = categoryName;
                     booksList.innerHTML = '';
@@ -214,13 +212,8 @@
                     // Fetch books for this category
                     try {
                         const apiUrl = '/api/v1/categories/by-category/' + categoryId + '/books';
-                        console.log('Fetching from:', apiUrl);
-
                         const response = await fetch(apiUrl);
-                        console.log('Response status:', response.status);
-
                         const books = await response.json();
-                        console.log('Books found:', books);
 
                         loadingSection.classList.add('hidden');
 
@@ -235,7 +228,6 @@
                             noBooksSection.classList.remove('hidden');
                         }
                     } catch (error) {
-                        console.error('Error fetching books:', error);
                         loadingSection.innerHTML = '<p class="text-red-500">Không thể tải danh sách sách.</p>';
                     }
                 });

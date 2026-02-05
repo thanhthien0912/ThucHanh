@@ -26,7 +26,7 @@ public class CartController {
     @GetMapping
     public String viewCart(Model model, Authentication authentication) {
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         String userId = authentication.getName();
@@ -50,7 +50,7 @@ public class CartController {
             RedirectAttributes redirectAttributes) {
 
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         try {
@@ -75,7 +75,7 @@ public class CartController {
             RedirectAttributes redirectAttributes) {
 
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         try {
@@ -99,7 +99,7 @@ public class CartController {
             RedirectAttributes redirectAttributes) {
 
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         try {
@@ -122,7 +122,7 @@ public class CartController {
             RedirectAttributes redirectAttributes) {
 
         if (authentication == null) {
-            return "redirect:/login";
+            return "redirect:/dangnhap";
         }
 
         try {

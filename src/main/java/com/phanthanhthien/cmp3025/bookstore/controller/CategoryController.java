@@ -7,6 +7,7 @@ import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -167,6 +168,7 @@ public class CategoryController {
      * Xóa danh mục và các sách liên quan
      */
     @GetMapping("/xoa/{id}")
+    @Transactional
     public String deleteCategory(@PathVariable Long id,
             RedirectAttributes redirectAttributes) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
