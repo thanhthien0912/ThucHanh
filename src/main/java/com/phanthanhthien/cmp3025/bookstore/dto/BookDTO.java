@@ -6,19 +6,19 @@ import java.time.LocalDateTime;
 /**
  * BookDTO - Data Transfer Object cho Book
  * Dùng để truyền dữ liệu giữa các layer
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
 public class BookDTO {
-    
-    private String id;
+
+    private Long id;
     private String title;
     private String author;
     private String description;
     private BigDecimal price;
     private Integer stock;
-    private String categoryId;
+    private Long categoryId;
     private String categoryName;
     private String imageUrl;
     private LocalDateTime createdAt;
@@ -27,8 +27,8 @@ public class BookDTO {
     // Constructors
     public BookDTO() {}
 
-    public BookDTO(String id, String title, String author, String description, 
-                   BigDecimal price, Integer stock, String categoryId, String imageUrl) {
+    public BookDTO(Long id, String title, String author, String description,
+                   BigDecimal price, Integer stock, Long categoryId, String imageUrl) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -40,11 +40,11 @@ public class BookDTO {
     }
 
     // Getters và Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -88,11 +88,11 @@ public class BookDTO {
         this.stock = stock;
     }
 
-    public String getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 

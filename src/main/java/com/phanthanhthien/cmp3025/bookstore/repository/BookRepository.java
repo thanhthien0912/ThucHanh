@@ -8,12 +8,12 @@ import java.util.List;
 
 /**
  * Book Repository - Truy vấn MongoDB cho collection books
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
 @Repository
-public interface BookRepository extends MongoRepository<Book, String> {
+public interface BookRepository extends MongoRepository<Book, Long> {
 
     /**
      * Tìm sách theo tên (không phân biệt hoa thường)
@@ -28,7 +28,7 @@ public interface BookRepository extends MongoRepository<Book, String> {
     /**
      * Tìm sách theo danh mục
      */
-    List<Book> findByCategoryId(String categoryId);
+    List<Book> findByCategoryId(Long categoryId);
 
     /**
      * Tìm sách có giá nhỏ hơn hoặc bằng

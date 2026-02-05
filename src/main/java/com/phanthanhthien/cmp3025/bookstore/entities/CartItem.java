@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  */
 public class CartItem {
 
-    private String bookId;
+    private Long bookId;
     private String bookTitle;
     private String author;
     private String imageUrl;
@@ -18,7 +18,7 @@ public class CartItem {
     public CartItem() {
     }
 
-    public CartItem(String bookId, String bookTitle, String author, String imageUrl, BigDecimal price,
+    public CartItem(Long bookId, String bookTitle, String author, String imageUrl, BigDecimal price,
             Integer quantity) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
@@ -34,11 +34,11 @@ public class CartItem {
     }
 
     // Getters và Setters
-    public String getBookId() {
+    public Long getBookId() {
         return bookId;
     }
 
-    public void setBookId(String bookId) {
+    public void setBookId(Long bookId) {
         this.bookId = bookId;
     }
 

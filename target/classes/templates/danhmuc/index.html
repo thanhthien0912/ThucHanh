@@ -11,80 +11,101 @@
     <nav th:replace="~{layout :: navbar}"></nav>
 
     <main class="flex-grow-1">
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="bi bi-tags me-2"></i>Quản lý Danh mục</h2>
-                <a th:href="@{/danhmuc/them}" class="btn btn-success">
-                    <i class="bi bi-plus-circle me-1"></i>Thêm danh mục
+        <div class="container mx-auto px-4 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">
+                    <i class="bi bi-tags mr-2"></i>Quản lý Danh mục
+                </h2>
+                <a th:href="@{/danhmuc/them}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-1"></i>Thêm danh mục
                 </a>
             </div>
 
             <!-- Alert Messages -->
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i><span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div th:if="${successMessage}" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-700 hover:text-green-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
             </div>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-red-700 hover:text-red-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Statistics -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card bg-success text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Tổng số danh mục</h5>
-                            <h3 th:text="${totalCategories}">0</h3>
+            <div class="mb-6">
+                <div class="bg-primary-600 text-white rounded-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-primary-200 text-sm font-medium mb-1">Tổng số danh mục</p>
+                            <h3 th:text="${totalCategories}" class="text-3xl font-bold">0</h3>
                         </div>
+                        <i class="bi bi-tags text-4xl text-primary-300"></i>
                     </div>
                 </div>
             </div>
 
             <!-- Categories Table -->
-            <div class="card" th:if="${categories != null && !categories.isEmpty()}">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tên danh mục</th>
-                                    <th>Mô tả</th>
-                                    <th>Ngày tạo</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="cat : ${categories}">
-                                    <td th:text="${cat.id}">1</td>
-                                    <td><strong th:text="${cat.name}">Tên danh mục</strong></td>
-                                    <td th:text="${cat.description}">Mô tả</td>
-                                    <td th:text="${#temporals.format(cat.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
-                                    <td>
-                                        <a th:href="@{/danhmuc/sua/{id}(id=${cat.id})}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden" th:if="${categories != null && !categories.isEmpty()}">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Tên danh mục</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Mô tả</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Ngày tạo</th>
+                                <th class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr th:each="cat : ${categories}" class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-600 font-mono" th:text="${cat.id}">1</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold" th:text="${cat.name}">Tên danh mục</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600" th:text="${cat.description}">Mô tả</td>
+                                <td class="px-6 py-4 text-sm text-gray-600" th:text="${#temporals.format(cat.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a th:href="@{/danhmuc/sua/{id}(id=${cat.id})}" class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors" title="Sửa">
+                                            <i class="bi bi-pencil text-sm"></i>
                                         </a>
-                                        <a th:href="@{/danhmuc/xoa/{id}(id=${cat.id})}" 
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">
-                                            <i class="bi bi-trash"></i>
+                                        <a th:href="@{/danhmuc/xoa/{id}(id=${cat.id})}"
+                                           class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                                           onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')"
+                                           title="Xóa">
+                                            <i class="bi bi-trash text-sm"></i>
                                         </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Empty state -->
-            <div class="text-center py-5" th:if="${categories == null || categories.isEmpty()}">
-                <i class="bi bi-tags display-1 text-muted"></i>
-                <h4 class="text-muted mt-3">Chưa có danh mục nào</h4>
-                <p class="text-muted">Tạo danh mục để phân loại sách</p>
-                <a th:href="@{/danhmuc/them}" class="btn btn-success">
-                    <i class="bi bi-plus-circle me-1"></i>Thêm danh mục đầu tiên
+            <div class="text-center py-16" th:if="${categories == null || categories.isEmpty()}">
+                <i class="bi bi-tags text-7xl text-gray-300 mb-4"></i>
+                <h4 class="text-lg font-semibold text-gray-600 mb-2">Chưa có danh mục nào</h4>
+                <p class="text-gray-500 mb-6">Bắt đầu bằng cách thêm danh mục vào hệ thống</p>
+                <a th:href="@{/danhmuc/them}" class="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-2"></i>Thêm danh mục đầu tiên
                 </a>
             </div>
 

@@ -19,6 +19,15 @@ spring:
   application:
     name: bookstore-management
 
+  # HTTP Encoding Configuration
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-request: true
+      force-response: true
+
   # Thymeleaf Configuration
   thymeleaf:
     prefix: classpath:/templates/
@@ -26,17 +35,19 @@ spring:
     mode: HTML
     encoding: UTF-8
     cache: false  # Disable cache for development
+    servlet:
+      content-type: text/html; charset=UTF-8
 
   # MongoDB Configuration
   data:
     mongodb:
-      uri: mongodb://localhost:27017/bookstore_db
+      uri: mongodb://localhost:27017/bookstore_db_new
       # Alternative configuration:
       # host: localhost
       # port: 27017
-      # database: bookstore_db
-      # username: 
-      # password: 
+      # database: bookstore_db_new
+      # username:
+      # password:
 
   # DevTools Configuration
   devtools:

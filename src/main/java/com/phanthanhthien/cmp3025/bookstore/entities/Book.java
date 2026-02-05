@@ -16,24 +16,24 @@ import java.time.LocalDateTime;
 public class Book {
 
     @Id
-    private String id;
-    
+    private Long id;
+
     private String title;
-    
+
     private String author;
-    
+
     private String description;
-    
+
     private BigDecimal price;
-    
+
     private Integer stock;
-    
-    private String categoryId;
-    
+
+    private Long categoryId;
+
     private String imageUrl;
-    
+
     private LocalDateTime createdAt;
-    
+
     private LocalDateTime updatedAt;
 
     // Default constructor
@@ -43,8 +43,9 @@ public class Book {
     }
 
     // Constructor với tham số
-    public Book(String title, String author, String description, 
-                BigDecimal price, Integer stock, String categoryId) {
+    public Book(Long id, String title, String author, String description,
+                BigDecimal price, Integer stock, Long categoryId) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.description = description;
@@ -56,11 +57,11 @@ public class Book {
     }
 
     // Getters và Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -104,11 +105,11 @@ public class Book {
         this.stock = stock;
     }
 
-    public String getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -144,7 +145,7 @@ public class Book {
     @Override
     public String toString() {
         return "Book{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", price=" + price +

@@ -37,7 +37,7 @@ public class CartService {
     /**
      * Thêm sách vào giỏ hàng
      */
-    public Cart addToCart(String userId, String bookId, int quantity) {
+    public Cart addToCart(String userId, Long bookId, int quantity) {
         Cart cart = getCartByUserId(userId);
 
         Optional<Book> bookOpt = bookRepository.findById(bookId);
@@ -67,7 +67,7 @@ public class CartService {
     /**
      * Cập nhật số lượng
      */
-    public Cart updateQuantity(String userId, String bookId, int quantity) {
+    public Cart updateQuantity(String userId, Long bookId, int quantity) {
         Cart cart = getCartByUserId(userId);
 
         if (quantity > 0) {
@@ -85,7 +85,7 @@ public class CartService {
     /**
      * Xóa sách khỏi giỏ hàng
      */
-    public Cart removeFromCart(String userId, String bookId) {
+    public Cart removeFromCart(String userId, Long bookId) {
         Cart cart = getCartByUserId(userId);
         cart.removeItem(bookId);
         return cartRepository.save(cart);

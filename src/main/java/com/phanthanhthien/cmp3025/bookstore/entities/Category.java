@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 /**
  * Category Entity - Collection: categories
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 public class Category {
 
     @Id
-    private String id;
-    
+    private Long id;
+
     private String name;
-    
+
     private String description;
-    
+
     private LocalDateTime createdAt;
-    
+
     private LocalDateTime updatedAt;
 
     // Default constructor
@@ -32,7 +32,8 @@ public class Category {
     }
 
     // Constructor với tham số
-    public Category(String name, String description) {
+    public Category(Long id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.createdAt = LocalDateTime.now();
@@ -40,11 +41,11 @@ public class Category {
     }
 
     // Getters và Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -88,7 +89,7 @@ public class Category {
     @Override
     public String toString() {
         return "Category{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

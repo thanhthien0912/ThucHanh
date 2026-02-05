@@ -4,52 +4,59 @@
     <th:block th:insert="~{layout :: head}"></th:block>
     <title th:text="${pageTitle}">Thêm danh mục</title>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="flex flex-col min-h-screen">
 
     <header th:replace="~{layout :: header}"></header>
     <nav th:replace="~{layout :: navbar}"></nav>
 
     <main class="flex-grow-1">
-        <div class="container py-4">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/danhmuc}">Quản lý Danh mục</a></li>
-                    <li class="breadcrumb-item active" th:text="${isEdit} ? 'Sửa danh mục' : 'Thêm danh mục'">Thêm danh mục</li>
+        <div class="container mx-auto px-4 py-6">
+            <!-- Breadcrumb -->
+            <nav class="text-sm mb-6">
+                <ol class="flex items-center gap-2">
+                    <li><a th:href="@{/}" class="text-gray-500 hover:text-gray-700">Trang chủ</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li><a th:href="@{/danhmuc}" class="text-gray-500 hover:text-gray-700">Quản lý Danh mục</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-primary-600 font-medium" th:text="${isEdit} ? 'Sửa danh mục' : 'Thêm danh mục'">Thêm danh mục</li>
                 </ol>
             </nav>
 
-            <h2 class="mb-4">
-                <i class="bi bi-plus-circle me-2" th:if="!${isEdit}"></i>
-                <i class="bi bi-pencil me-2" th:if="${isEdit}"></i>
+            <!-- Header -->
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+                <i class="bi bi-plus-circle mr-2" th:if="!${isEdit}"></i>
+                <i class="bi bi-pencil mr-2" th:if="${isEdit}"></i>
                 <span th:text="${isEdit} ? 'Sửa danh mục' : 'Thêm danh mục mới'">Thêm danh mục mới</span>
             </h2>
 
-            <div class="card">
-                <div class="card-body">
-                    <form th:action="${isEdit} ? @{/danhmuc/sua/{id}(id=${category.id})} : @{/danhmuc/them}" 
-                          th:object="${category}" method="post">
-                        
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" th:field="*{name}" 
+            <!-- Form Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 max-w-2xl">
+                <div class="p-6">
+                    <form th:action="${isEdit} ? @{/danhmuc/sua/{id}(id=${category.id})} : @{/danhmuc/them}"
+                          th:object="${category}" method="post" class="space-y-6">
+
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Tên danh mục <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="name" th:field="*{name}"
                                    placeholder="Nhập tên danh mục" required>
-                            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="description" th:field="*{description}" 
+
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
+                            <textarea class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none" id="description" th:field="*{description}"
                                       rows="3" placeholder="Mô tả về danh mục"></textarea>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                                <i class="bi bi-save mr-1"></i>
                                 <span th:text="${isEdit} ? 'Cập nhật' : 'Lưu danh mục'">Lưu danh mục</span>
                             </button>
-                            <a th:href="@{/danhmuc}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Hủy
+                            <a th:href="@{/danhmuc}" class="inline-flex items-center px-6 py-2.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all">
+                                <i class="bi bi-x-circle mr-1"></i>Hủy
                             </a>
                         </div>
                     </form>

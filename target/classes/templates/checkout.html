@@ -6,144 +6,143 @@
 <body>
     <div th:replace="~{layout :: navbar}"></div>
 
-    <main class="container py-4">
+    <main class="container mx-auto px-4 py-6">
         <!-- Tiêu đề -->
-        <div class="mb-4">
-            <h2><i class="bi bi-credit-card me-2"></i>Thanh toán</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/giohang}">Giỏ hàng</a></li>
-                    <li class="breadcrumb-item active">Thanh toán</li>
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                <i class="bi bi-credit-card mr-2"></i>Thanh toán
+            </h2>
+            <nav class="text-sm mt-2">
+                <ol class="flex items-center gap-2">
+                    <li><a th:href="@{/}" class="text-gray-500 hover:text-gray-700">Trang chủ</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li><a th:href="@{/giohang}" class="text-gray-500 hover:text-gray-700">Giỏ hàng</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-primary-600 font-medium">Thanh toán</li>
                 </ol>
             </nav>
         </div>
 
         <!-- Thông báo lỗi -->
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div th:if="${error}" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
         </div>
 
-        <div class="row g-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Thông tin đơn hàng -->
-            <div class="col-lg-7">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="bi bi-box me-2"></i>Chi tiết đơn hàng
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <span class="font-medium text-gray-800">
+                            <i class="bi bi-box mr-2"></i>Chi tiết đơn hàng
+                        </span>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th class="text-center">SL</th>
-                                        <th class="text-end">Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="item : ${cart.items}">
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}"
-                                                    class="rounded"
-                                                    style="width: 40px; height: 50px; object-fit: cover;">
-                                                <div>
-                                                    <strong th:text="${item.bookTitle}">Tên sách</strong>
-                                                    <br><small class="text-muted" th:text="${item.author}">Tác
-                                                        giả</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center" th:text="${item.quantity}">1</td>
-                                        <td class="text-end fw-bold"
-                                            th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
-                                            100,000 đ
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="divide-y divide-gray-100">
+                        <div th:each="item : ${cart.items}" class="p-4 flex items-start gap-4">
+                            <!-- Ảnh sản phẩm -->
+                            <div class="flex-shrink-0 w-10 h-12">
+                                <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}"
+                                    class="w-full h-full object-cover rounded">
+                                <div th:if="${item.imageUrl == null}"
+                                    class="w-full h-full flex items-center justify-center text-white bg-gradient-to-br from-primary-500 to-purple-500 rounded">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-gray-900 truncate" th:text="${item.bookTitle}">Tên sách</h3>
+                                <p class="text-sm text-gray-500" th:text="${item.author}">Tác giả</p>
+                            </div>
+
+                            <!-- Số lượng và thành tiền -->
+                            <div class="flex items-center gap-8">
+                                <span class="text-gray-600 w-8 text-center" th:text="${item.quantity}">1</span>
+                                <span class="font-bold text-gray-900"
+                                    th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    100,000 đ
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Phương thức thanh toán -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="bi bi-wallet2 me-2"></i>Phương thức thanh toán
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <span class="font-medium text-gray-800">
+                            <i class="bi bi-wallet2 mr-2"></i>Phương thức thanh toán
+                        </span>
                     </div>
-                    <div class="card-body">
-                        <div class="list-group">
-                            <label class="list-group-item d-flex align-items-center gap-3">
-                                <input type="radio" name="paymentMethod" value="MOMO" checked
-                                    class="form-check-input m-0">
-                                <img src="https://developers.momo.vn/v3/img/logo.svg" alt="MoMo" style="width: 40px;">
-                                <div>
-                                    <strong>Ví MoMo</strong>
-                                    <br><small class="text-muted">Thanh toán an toàn qua ví điện tử MoMo</small>
-                                </div>
-                                <span class="badge bg-success ms-auto">Khuyến nghị</span>
-                            </label>
-                            <label class="list-group-item d-flex align-items-center gap-3 disabled">
-                                <input type="radio" name="paymentMethod" value="COD" disabled
-                                    class="form-check-input m-0">
-                                <i class="bi bi-cash-coin fs-3 text-success"></i>
-                                <div>
-                                    <strong class="text-muted">Thanh toán khi nhận hàng (COD)</strong>
-                                    <br><small class="text-muted">Chưa hỗ trợ</small>
-                                </div>
-                            </label>
-                        </div>
+                    <div class="p-4 space-y-2">
+                        <label class="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="MOMO" checked class="w-4 h-4 text-green-600">
+                            <img src="https://developers.momo.vn/v3/img/logo.svg" alt="MoMo" class="w-10 h-10">
+                            <div class="flex-1">
+                                <strong class="text-gray-900">Ví MoMo</strong>
+                                <p class="text-sm text-gray-500">Thanh toán an toàn qua ví điện tử MoMo</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Khuyến nghị</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed">
+                            <input type="radio" name="paymentMethod" value="COD" disabled class="w-4 h-4 text-gray-400">
+                            <i class="bi bi-cash-coin text-3xl text-gray-400"></i>
+                            <div class="flex-1">
+                                <strong class="text-gray-500">Thanh toán khi nhận hàng (COD)</strong>
+                                <p class="text-sm text-gray-400">Chưa hỗ trợ</p>
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>
 
             <!-- Tổng tiền -->
-            <div class="col-lg-5">
-                <div class="card sticky-top" style="top: 80px;">
-                    <div class="card-header bg-primary text-white">
-                        <i class="bi bi-receipt me-2"></i>Thông tin thanh toán
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 sticky top-20">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-primary-600 text-white">
+                        <span class="font-medium">
+                            <i class="bi bi-receipt mr-2"></i>Thông tin thanh toán
+                        </span>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Số lượng sản phẩm:</span>
-                            <span th:text="${cart.totalItems}">0</span>
+                    <div class="p-6 space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Số lượng sản phẩm:</span>
+                            <span class="text-gray-900" th:text="${cart.totalItems}">0</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Tạm tính:</span>
-                            <span th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0
-                                đ</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Tạm tính:</span>
+                            <span class="text-gray-900" th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Phí vận chuyển:</span>
-                            <span class="text-success">Miễn phí</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Phí vận chuyển:</span>
+                            <span class="text-green-600 font-medium">Miễn phí</span>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <strong class="fs-5">Tổng thanh toán:</strong>
-                            <strong class="text-danger fs-4"
+                        <hr class="border-gray-200">
+                        <div class="flex justify-between">
+                            <span class="font-semibold text-gray-800">Tổng thanh toán:</span>
+                            <span class="font-bold text-2xl text-red-600"
                                 th:text="${#numbers.formatDecimal(cart.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
                                 0 đ
-                            </strong>
+                            </span>
                         </div>
 
                         <!-- Nút thanh toán MoMo -->
                         <form th:action="@{/thanhtoan/momo}" method="post">
-                            <button type="submit" class="btn btn-lg w-100 text-white"
-                                style="background: linear-gradient(135deg, #a50064, #d82d8b);">
+                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-600 to-pink-700 text-white font-medium rounded-lg hover:shadow-medium transition-all">
                                 <img src="https://developers.momo.vn/v3/img/logo.svg" alt="MoMo"
-                                    style="width: 30px; margin-right: 10px; filter: brightness(0) invert(1);">
+                                    class="w-6 h-6 inline mr-2 brightness-0 invert">
                                 Thanh toán với MoMo
                             </button>
                         </form>
 
-                        <div class="mt-3 text-center">
-                            <small class="text-muted">
-                                <i class="bi bi-shield-check me-1"></i>
+                        <div class="mt-4 text-center">
+                            <p class="text-sm text-gray-500">
+                                <i class="bi bi-shield-check mr-1"></i>
                                 Thanh toán an toàn & bảo mật
-                            </small>
+                            </p>
                         </div>
                     </div>
                 </div>

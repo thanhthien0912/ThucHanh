@@ -53,7 +53,7 @@ public class Cart {
     }
 
     // Cập nhật số lượng
-    public void updateQuantity(String bookId, int quantity) {
+    public void updateQuantity(Long bookId, int quantity) {
         for (CartItem item : items) {
             if (item.getBookId().equals(bookId)) {
                 if (quantity <= 0) {
@@ -68,7 +68,7 @@ public class Cart {
     }
 
     // Xóa item
-    public void removeItem(String bookId) {
+    public void removeItem(Long bookId) {
         items.removeIf(item -> item.getBookId().equals(bookId));
         this.updatedAt = LocalDateTime.now();
     }

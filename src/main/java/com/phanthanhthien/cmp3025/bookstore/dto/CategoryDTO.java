@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 
 /**
  * CategoryDTO - Data Transfer Object cho Category
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
 public class CategoryDTO {
-    
-    private String id;
+
+    private Long id;
     private String name;
     private String description;
     private Long bookCount;
@@ -20,18 +20,18 @@ public class CategoryDTO {
     // Constructors
     public CategoryDTO() {}
 
-    public CategoryDTO(String id, String name, String description) {
+    public CategoryDTO(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
     // Getters và Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

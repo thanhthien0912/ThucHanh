@@ -36,7 +36,7 @@ public class CategoryService {
     /**
      * Tìm danh mục theo ID
      */
-    public Optional<Category> findById(String id) {
+    public Optional<Category> findById(Long id) {
         return categoryRepository.findById(id);
     }
 
@@ -57,7 +57,7 @@ public class CategoryService {
     /**
      * Xóa danh mục
      */
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         categoryRepository.deleteById(id);
     }
 

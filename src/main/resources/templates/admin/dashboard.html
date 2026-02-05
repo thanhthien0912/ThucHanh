@@ -6,124 +6,138 @@
     <title th:text="${pageTitle}">Bảng điều khiển Admin</title>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="flex flex-col min-h-screen">
 
     <header th:replace="~{layout :: header}"></header>
     <nav th:replace="~{layout :: navbar}"></nav>
 
     <main class="flex-grow-1">
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="bi bi-speedometer2 me-2"></i>Bảng điều khiển Admin</h2>
-                <span class="badge bg-warning text-dark fs-6">ADMIN ONLY</span>
+        <div class="container mx-auto px-4 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">
+                    <i class="bi bi-speedometer2 mr-2"></i>Bảng điều khiển Admin
+                </h2>
+                <span class="px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded-full">ADMIN ONLY</span>
             </div>
 
             <!-- Stats Cards -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-3">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title">Tổng số sách</h6>
-                                    <h3 class="mb-0" th:text="${totalBooks}">0</h3>
-                                </div>
-                                <i class="bi bi-journal-bookmark fs-1 opacity-50"></i>
-                            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-400 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Tổng số sách</p>
+                            <h3 class="text-3xl font-bold text-gray-800" th:text="${totalBooks}">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center">
+                            <i class="bi bi-journal-bookmark text-2xl text-gray-600"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card bg-success text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title">Danh mục</h6>
-                                    <h3 class="mb-0" th:text="${totalCategories}">0</h3>
-                                </div>
-                                <i class="bi bi-tags fs-1 opacity-50"></i>
-                            </div>
+                <div class="bg-white rounded-xl shadow-sm border border-green-400 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Danh mục</p>
+                            <h3 class="text-3xl font-bold text-green-600" th:text="${totalCategories}">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center">
+                            <i class="bi bi-tags text-2xl text-green-600"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card bg-info text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title">Đơn hàng</h6>
-                                    <h3 class="mb-0" th:text="${totalOrders}">0</h3>
-                                </div>
-                                <i class="bi bi-cart-check fs-1 opacity-50"></i>
-                            </div>
+                <div class="bg-white rounded-xl shadow-sm border border-sky-400 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Đơn hàng</p>
+                            <h3 class="text-3xl font-bold text-sky-600" th:text="${totalOrders}">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl bg-sky-100 flex items-center justify-center">
+                            <i class="bi bi-cart-check text-2xl text-sky-600"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card bg-warning text-dark">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title">Người dùng</h6>
-                                    <h3 class="mb-0" th:text="${totalUsers}">0</h3>
-                                </div>
-                                <i class="bi bi-people fs-1 opacity-50"></i>
-                            </div>
+                <div class="bg-white rounded-xl shadow-sm border border-amber-400 p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Người dùng</p>
+                            <h3 class="text-3xl font-bold text-amber-600" th:text="${totalUsers}">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center">
+                            <i class="bi bi-people text-2xl text-amber-600"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Admin Actions -->
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Thao tác nhanh</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group">
-                                <a th:href="@{/sach/them}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-plus-circle me-2"></i>Thêm sách mới
-                                </a>
-                                <a th:href="@{/danhmuc/them}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-plus-circle me-2"></i>Thêm danh mục
-                                </a>
-                                <a th:href="@{/nguoidung}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-people me-2"></i>Quản lý ngườ dùng
-                                </a>
-                                <a th:href="@{/apidocs}" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-code-slash me-2"></i>Xem API Documentation
-                                </a>
+            <!-- Admin Actions & Info -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h5 class="text-lg font-semibold text-gray-800 mb-0">
+                            <i class="bi bi-lightning-charge mr-2 text-gray-600"></i>Thao tác nhanh
+                        </h5>
+                    </div>
+                    <div class="p-4 space-y-2">
+                        <a th:href="@{/sach/them}" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                <i class="bi bi-plus-circle text-gray-600"></i>
                             </div>
-                        </div>
+                            <span class="font-medium">Thêm sách mới</span>
+                        </a>
+                        <a th:href="@{/danhmuc/them}" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                <i class="bi bi-plus-circle text-gray-600"></i>
+                            </div>
+                            <span class="font-medium">Thêm danh mục</span>
+                        </a>
+                        <a th:href="@{/nguoidung}" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                <i class="bi bi-people text-gray-600"></i>
+                            </div>
+                            <span class="font-medium">Quản lý người dùng</span>
+                        </a>
+                        <a th:href="@{/apidocs}" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                <i class="bi bi-code-slash text-gray-600"></i>
+                            </div>
+                            <span class="font-medium">Xem API Documentation</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Thông tin hệ thống</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                <li class="mb-2">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    Spring Boot 3.2.2
-                                </li>
-                                <li class="mb-2">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    Thymeleaf Template Engine
-                                </li>
-                                <li class="mb-2">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    Spring Security 6.x
-                                </li>
-                                <li class="mb-2">
-                                    <i class="bi bi-database me-2"></i>
-                                    MongoDB (Chờ kết nối)
-                                </li>
-                            </ul>
-                        </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h5 class="text-lg font-semibold text-gray-800 mb-0">
+                            <i class="bi bi-info-circle mr-2 text-gray-600"></i>Thông tin hệ thống
+                        </h5>
+                    </div>
+                    <div class="p-4">
+                        <ul class="space-y-3">
+                            <li class="flex items-center text-gray-700">
+                                <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                    <i class="bi bi-check-circle text-gray-600"></i>
+                                </div>
+                                <span class="font-medium">Spring Boot 3.2.2</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                    <i class="bi bi-check-circle text-gray-600"></i>
+                                </div>
+                                <span class="font-medium">Thymeleaf Template Engine</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <div class="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0 mr-3">
+                                    <i class="bi bi-check-circle text-gray-600"></i>
+                                </div>
+                                <span class="font-medium">Spring Security 6.x</span>
+                            </li>
+                            <li class="flex items-center text-gray-700">
+                                <div class="w-10 h-10 rounded-lg bg-gray-300 flex items-center justify-center flex-shrink-0 mr-3">
+                                    <i class="bi bi-database text-gray-600"></i>
+                                </div>
+                                <span class="font-medium">MongoDB (Đã kết nối)</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

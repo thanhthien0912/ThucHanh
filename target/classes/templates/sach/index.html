@@ -5,115 +5,124 @@
     <th:block th:insert="~{layout :: head}"></th:block>
     <title th:text="${pageTitle}">Quản lý Sách</title>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="flex flex-col min-h-screen">
 
     <header th:replace="~{layout :: header}"></header>
     <nav th:replace="~{layout :: navbar}"></nav>
 
     <main class="flex-grow-1">
-        <div class="container py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="bi bi-journal-bookmark me-2"></i>Quản lý Sách</h2>
-                <a th:href="@{/sach/them}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-1"></i>Thêm sách mới
+        <div class="container mx-auto px-4 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">
+                    <i class="bi bi-journal-bookmark mr-2"></i>Quản lý Sách
+                </h2>
+                <a th:href="@{/sach/them}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-1"></i>Thêm sách mới
                 </a>
             </div>
 
             <!-- Alert Messages -->
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i><span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div th:if="${successMessage}" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-700 hover:text-green-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
             </div>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-
-            <!-- Search -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form th:action="@{/sach/timkiem}" method="get" class="row g-3">
-                        <div class="col-md-10">
-                            <input type="text" name="q" class="form-control" 
-                                   placeholder="Tìm kiếm theo tên sách, tác giả..."
-                                   th:value="${keyword}">
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-search me-1"></i>Tìm
-                            </button>
-                        </div>
-                    </form>
+            <div th:if="${errorMessage}" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-red-700 hover:text-red-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             </div>
 
+            <!-- Search -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-6">
+                <form th:action="@{/sach/timkiem}" method="get" class="flex gap-3">
+                    <input type="text" name="q"
+                           placeholder="Tìm kiếm theo tên sách, tác giả..."
+                           th:value="${keyword}"
+                           class="flex-1 px-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    <button type="submit" class="px-6 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                        <i class="bi bi-search mr-1"></i>Tìm
+                    </button>
+                </form>
+            </div>
+
             <!-- Statistics -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">Tổng số sách</h5>
-                            <h3 th:text="${totalBooks}">0</h3>
-                        </div>
-                    </div>
+            <div class="mb-6">
+                <div class="bg-primary-600 text-white rounded-lg p-6">
+                    <h5 class="text-sm font-medium opacity-90 mb-1">Tổng số sách</h5>
+                    <h3 class="text-3xl font-bold" th:text="${totalBooks}">0</h3>
                 </div>
             </div>
 
             <!-- Books Table -->
-            <div class="card" th:if="${books != null && !books.isEmpty()}">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tên sách</th>
-                                    <th>Tác giả</th>
-                                    <th>Giá (VNĐ)</th>
-                                    <th>Tồn kho</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="book : ${books}">
-                                    <td th:text="${book.id}">1</td>
-                                    <td>
-                                        <strong th:text="${book.title}">Tên sách</strong>
-                                        <small class="text-muted d-block" th:text="${book.description}">Mô tả</small>
-                                    </td>
-                                    <td th:text="${book.author}">Tác giả</td>
-                                    <td th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')}">100,000</td>
-                                    <td>
-                                        <span th:class="${book.stock > 0} ? 'badge bg-success' : 'badge bg-danger'"
-                                              th:text="${book.stock}">10</span>
-                                    </td>
-                                    <td>
-                                        <a th:href="@{/sach/chi-tiet/{id}(id=${book.id})}" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden" th:if="${books != null && !books.isEmpty()}">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Tên sách</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Tác giả</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Giá (VNĐ)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Tồn kho</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr th:each="book : ${books}" class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-900" th:text="${book.id}">1</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900" th:text="${book.title}">Tên sách</div>
+                                    <div class="text-sm text-gray-500" th:text="${book.description}">Mô tả</div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900" th:text="${book.author}">Tác giả</td>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')}">100,000</td>
+                                <td class="px-6 py-4">
+                                    <span th:class="${book.stock > 0} ? 'px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium' : 'px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium'"
+                                          th:text="${book.stock}">10</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <a th:href="@{/sach/chi-tiet/{id}(id=${book.id})}" class="p-2 text-accent-600 bg-accent-50 rounded-lg hover:bg-accent-100 transition-colors" title="Xem chi tiết">
+                                            <i class="bi bi-eye text-sm"></i>
                                         </a>
-                                        <a th:href="@{/sach/sua/{id}(id=${book.id})}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i>
+                                        <a th:href="@{/sach/sua/{id}(id=${book.id})}" class="p-2 text-yellow-600 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors" title="Sửa">
+                                            <i class="bi bi-pencil text-sm"></i>
                                         </a>
-                                        <a th:href="@{/sach/xoa/{id}(id=${book.id})}" 
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Bạn có chắc muốn xóa sách này?')">
-                                            <i class="bi bi-trash"></i>
+                                        <a th:href="@{/sach/xoa/{id}(id=${book.id})}"
+                                           class="p-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                                           onclick="return confirm('Bạn có chắc muốn xóa sách này?')"
+                                           title="Xóa">
+                                            <i class="bi bi-trash text-sm"></i>
                                         </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Empty state -->
-            <div class="text-center py-5" th:if="${books == null || books.isEmpty()}">
-                <i class="bi bi-journal-bookmark display-1 text-muted"></i>
-                <h4 class="text-muted mt-3">Chưa có sách nào</h4>
-                <p class="text-muted">Bắt đầu bằng cách thêm sách mới vào hệ thống</p>
-                <a th:href="@{/sach/them}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-1"></i>Thêm sách đầu tiên
+            <div class="text-center py-16" th:if="${books == null || books.isEmpty()}">
+                <i class="bi bi-journal-bookmark text-7xl text-gray-300 mb-4"></i>
+                <h4 class="text-lg font-semibold text-gray-600 mb-2">Chưa có sách nào</h4>
+                <p class="text-gray-500 mb-6">Bắt đầu bằng cách thêm sách mới vào hệ thống</p>
+                <a th:href="@{/sach/them}" class="inline-flex items-center px-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-2"></i>Thêm sách đầu tiên
                 </a>
             </div>
 

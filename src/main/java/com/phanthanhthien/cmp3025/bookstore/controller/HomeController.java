@@ -3,6 +3,7 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +26,13 @@ public class HomeController {
 
     /**
      * Xử lý request GET cho đường dẫn "/" và "/home"
-     * 
+     *
      * @param model Model để truyền dữ liệu sang view
+     * @param authentication Authentication object để kiểm tra role
      * @return Tên view "home" để Thymeleaf render
      */
     @GetMapping({ "/", "/home" })
-    public String home(Model model) {
+    public String home(Model model, Authentication authentication) {
         // Truyền thông tin cơ bản sang view
         model.addAttribute("pageTitle", "Trang chủ - Hệ thống Quản lý Nhà sách");
         model.addAttribute("currentPage", "home");
@@ -41,14 +43,18 @@ public class HomeController {
         model.addAttribute("totalOrders", 0); // Sẽ cập nhật khi có Order repository
         model.addAttribute("totalUsers", 0); // Sẽ cập nhật khi có User repository
 
-        // Lấy danh sách sách để trưng bày (12 sách mới nhất)
-        model.addAttribute("books", bookRepository.findAll()
-                .stream()
-                .limit(12)
-                .toList());
-
         // Lấy danh sách danh mục
         model.addAttribute("categories", categoryRepository.findAll());
+
+        // Chỉ truyền books cho người dùng thường (không phải ADMIN)
+        // Admin không cần xem sách trên trang chủ, họ có trang quản lý riêng
+        if (authentication == null || authentication.getAuthorities().stream()
+                .noneMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+            model.addAttribute("books", bookRepository.findAll()
+                    .stream()
+                    .limit(12)
+                    .toList());
+        }
 
         return "home";
     }

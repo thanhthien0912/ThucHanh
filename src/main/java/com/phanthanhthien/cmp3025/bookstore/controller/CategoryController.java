@@ -2,6 +2,7 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 
 import com.phanthanhthien.cmp3025.bookstore.entities.Category;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
+import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -18,6 +21,7 @@ import java.util.Optional;
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
+@Slf4j
 @Controller
 @RequestMapping("/danhmuc")
 public class CategoryController {
@@ -25,15 +29,28 @@ public class CategoryController {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private CounterService counterService;
+
     /**
      * Xem danh sách tất cả danh mục
      */
     @GetMapping({"", "/"})
     public String listCategories(Model model) {
+        log.info("Loading all categories...");
+        List<Category> categories = categoryRepository.findAll();
+        log.info("Found {} categories", categories.size());
+        categories.forEach(cat -> log.info("Category: ID={}, Name={}", cat.getId(), cat.getName()));
+        
         model.addAttribute("pageTitle", "Quản lý Danh mục");
         model.addAttribute("currentPage", "danhmuc");
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categories);
         model.addAttribute("totalCategories", categoryRepository.count());
+        
+        log.info("Model attributes - categories: {}, totalCategories: {}", 
+                model.containsAttribute("categories") ? categories.size() : "NULL",
+                model.getAttribute("totalCategories"));
+        
         return "danhmuc/index";
     }
 
@@ -72,6 +89,10 @@ public class CategoryController {
             return "danhmuc/form";
         }
 
+        // Lấy ID tự động tăng cho danh mục mới
+        Long newId = counterService.getNextSequence("categories");
+        category.setId(newId);
+
         categoryRepository.save(category);
         redirectAttributes.addFlashAttribute("successMessage", 
                 "Thêm danh mục \"" + category.getName() + "\" thành công!");
@@ -83,7 +104,7 @@ public class CategoryController {
      * Hiển thị form sửa danh mục
      */
     @GetMapping("/sua/{id}")
-    public String editCategoryForm(@PathVariable String id, Model model, 
+    public String editCategoryForm(@PathVariable Long id, Model model,
                                   RedirectAttributes redirectAttributes) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
         
@@ -106,7 +127,7 @@ public class CategoryController {
      */
     @PostMapping("/sua/{id}")
     public String updateCategory(
-            @PathVariable String id,
+            @PathVariable Long id,
             @Valid @ModelAttribute("category") Category category,
             BindingResult result,
             Model model,
@@ -140,7 +161,7 @@ public class CategoryController {
      * Xóa danh mục
      */
     @GetMapping("/xoa/{id}")
-    public String deleteCategory(@PathVariable String id, 
+    public String deleteCategory(@PathVariable Long id,
                                 RedirectAttributes redirectAttributes) {
         Optional<Category> categoryOpt = categoryRepository.findById(id);
         

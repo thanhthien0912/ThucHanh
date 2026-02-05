@@ -8,12 +8,12 @@ import java.util.List;
 
 /**
  * Category Repository - Truy vấn MongoDB cho collection categories
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
 @Repository
-public interface CategoryRepository extends MongoRepository<Category, String> {
+public interface CategoryRepository extends MongoRepository<Category, Long> {
 
     /**
      * Tìm danh mục theo tên (không phân biệt hoa thường)

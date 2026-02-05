@@ -4,6 +4,7 @@ import com.phanthanhthien.cmp3025.bookstore.entities.Category;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -13,12 +14,13 @@ import java.util.Optional;
 
 /**
  * CategoryRestController - REST API cho Quản lý Danh mục
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
 @RestController
 @RequestMapping("/api/v1/categories")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class CategoryRestController {
 
     @Autowired
@@ -36,7 +38,7 @@ public class CategoryRestController {
      * GET /api/v1/categories/{id} - Lấy thông tin danh mục theo ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable String id) {
+    public ResponseEntity<?> getCategoryById(@PathVariable Long id) {
         Optional<Category> category = categoryRepository.findById(id);
         if (category.isPresent()) {
             return ResponseEntity.ok(category.get());
@@ -49,15 +51,24 @@ public class CategoryRestController {
      */
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody Category category) {
-        // Kiểm tra tên danh mục đã tồn tại chưa
-        if (categoryRepository.existsByNameIgnoreCase(category.getName())) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Tên danh mục đã tồn tại");
-            return ResponseEntity.badRequest().body(error);
+        try {
+            // Validate
+            if (category.getName() == null || category.getName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tên danh mục không được để trống");
+            }
+
+            // Kiểm tra tên danh mục đã tồn tại chưa
+            if (categoryRepository.existsByNameIgnoreCase(category.getName())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Tên danh mục đã tồn tại");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            Category savedCategory = categoryRepository.save(category);
+            return ResponseEntity.ok(savedCategory);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi tạo danh mục: " + e.getMessage());
         }
-        
-        Category savedCategory = categoryRepository.save(category);
-        return ResponseEntity.ok(savedCategory);
     }
 
     /**
@@ -65,36 +76,53 @@ public class CategoryRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategory(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Category categoryData) {
-        
-        Optional<Category> existingCategory = categoryRepository.findById(id);
-        if (existingCategory.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
-        categoryData.setId(id);
-        categoryData.onUpdate();
-        Category updatedCategory = categoryRepository.save(categoryData);
-        
-        return ResponseEntity.ok(updatedCategory);
+        try {
+            Optional<Category> existingCategory = categoryRepository.findById(id);
+            if (existingCategory.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Validate
+            if (categoryData.getName() == null || categoryData.getName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Tên danh mục không được để trống");
+            }
+
+            // Kiểm tra tên mới có trùng với danh mục khác không
+            if (!existingCategory.get().getName().equalsIgnoreCase(categoryData.getName())
+                    && categoryRepository.existsByNameIgnoreCase(categoryData.getName())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Tên danh mục đã tồn tại");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            categoryData.setId(id);
+            categoryData.onUpdate();
+            Category updatedCategory = categoryRepository.save(categoryData);
+
+            return ResponseEntity.ok(updatedCategory);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi cập nhật danh mục: " + e.getMessage());
+        }
     }
 
     /**
      * DELETE /api/v1/categories/{id} - Xóa danh mục
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable String id) {
+    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable Long id) {
         Optional<Category> category = categoryRepository.findById(id);
-        
+
         Map<String, String> response = new HashMap<>();
         if (category.isPresent()) {
             categoryRepository.deleteById(id);
             response.put("message", "Xóa danh mục thành công");
-            response.put("id", id);
+            response.put("id", id.toString());
             return ResponseEntity.ok(response);
         }
-        
+
         response.put("message", "Không tìm thấy danh mục");
         return ResponseEntity.status(404).body(response);
     }

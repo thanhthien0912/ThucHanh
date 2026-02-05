@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!--
     Home Page - Trang chủ Hệ thống Quản lý Nhà sách
-    Author: Phan Thanh Thien - MSSV: 2280603036
+    Author: Phan Thanh Thiên - MSSV: 2280603036
     Course: CMP3025 - J2EE
 -->
 
@@ -10,41 +10,9 @@
     <!-- Include common head fragment -->
     <th:block th:insert="~{layout :: head}"></th:block>
     <title th:text="${pageTitle} ?: 'Trang chủ - Hệ thống Quản lý Nhà sách'">Trang chủ</title>
-
-    <!-- Page-specific styles -->
-    <style>
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 0;
-        }
-
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .admin-card {
-            border: 2px solid #ffc107;
-        }
-
-        .admin-card .feature-icon {
-            color: #ffc107;
-        }
-    </style>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="flex flex-col min-h-screen">
 
     <!-- Include Header -->
     <header th:replace="~{layout :: header}"></header>
@@ -60,39 +28,21 @@
         <!-- ============================================ -->
         <!-- HERO SECTION - Thông tin nhận diện -->
         <!-- ============================================ -->
-        <section class="hero-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <h1 class="display-4 fw-bold mb-3">
-                            <i class="bi bi-book me-3"></i>Hệ thống Quản lý Nhà sách
-                        </h1>
-                        <p class="lead mb-4">
-                            Ứng dụng quản lý toàn diện cho cửa hàng sách, hỗ trợ quản lý sách,
-                            danh mục, đơn hàng và người dùng một cách hiệu quả.
-                        </p>
+        <section class="bg-gray-50 py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto text-center">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium mb-6">
+                        <i class="bi bi-book"></i>
+                        Hệ thống Quản lý Nhà sách
+                    </div>
+                    <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                        Quản lý nhà sách <span class="text-gray-800">hiện đại</span> và hiệu quả
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                        Ứng dụng quản lý toàn diện cho cửa hàng sách, hỗ trợ quản lý sách, danh mục, đơn hàng và người dùng một cách hiệu quả.
+                    </p>
 
-                        <!-- Thông tin sinh viên -->
-                        <div class="bg-white bg-opacity-10 rounded p-3 d-inline-block">
-                            <div class="row text-white">
-                                <div class="col-auto">
-                                    <i class="bi bi-person-badge me-2"></i>
-                                    <strong>Sinh viên:</strong> Phan Thanh Thien
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-card-text me-2"></i>
-                                    <strong>MSSV:</strong> 2280603036
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-journal-code me-2"></i>
-                                    <strong>Môn học:</strong> CMP3025
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 text-center d-none d-lg-block">
-                        <i class="bi bi-journal-bookmark display-1"></i>
-                    </div>
+                    <!-- Buttons đã xóa -->
                 </div>
             </div>
         </section>
@@ -100,104 +50,106 @@
         <!-- ============================================ -->
         <!-- THÔNG BÁO (Alerts) -->
         <!-- ============================================ -->
-        <div class="container mt-4">
+        <div class="container mx-auto px-4 mt-6">
             <!-- Thông báo đăng xuất thành công -->
-            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>Bạn đã đăng xuất thành công!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div th:if="${param.logout}" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-check-circle text-lg"></i>
+                        <span>Bạn đã đăng xuất thành công!</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-700 hover:text-green-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Thông báo chào mừng khi đăng nhập -->
-            <div sec:authorize="isAuthenticated()" class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="bi bi-info-circle me-2"></i>
-                Chào mừng <strong sec:authentication="name">User</strong>!
-                Bạn đã đăng nhập vào hệ thống.
-                <span sec:authorize="hasRole('ADMIN')" class="badge bg-warning text-dark ms-2">
-                    Quyền quản trị viên
-                </span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div sec:authorize="isAuthenticated()" class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-info-circle text-lg"></i>
+                        <span>Chào mừng <strong sec:authentication="name">User</strong>!
+                        Bạn đã đăng nhập vào hệ thống.
+                        <span sec:authorize="hasRole('ADMIN')" class="ml-2 px-2 py-0.5 bg-yellow-500 text-white text-xs rounded-full font-medium">
+                            Quyền quản trị viên
+                        </span></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-700 hover:text-blue-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- ============================================ -->
-        <!-- SÁCH TRƯNG BÀY (Book Showcase) -->
+        <!-- SÁCH TRƯNG BÀY (Book Showcase) - Chỉ User (Không phải Admin) -->
         <!-- ============================================ -->
-        <section class="py-4 bg-light" th:if="${books != null && !books.isEmpty()}">
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="mb-0">
-                        <i class="bi bi-book me-2"></i>Sách nổi bật
+        <section class="py-6 bg-gray-50" th:if="${books != null && !books.isEmpty()}" sec:authorize="!hasRole('ADMIN')">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800">
+                        <i class="bi bi-book mr-2"></i>Sách nổi bật
                     </h3>
-                    <a th:href="@{/sach}" class="btn btn-outline-primary btn-sm">
-                        Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+                    <!-- Link Xem tất cả - Chỉ Admin -->
+                    <a th:href="@{/sach}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all" sec:authorize="hasRole('ADMIN')">
+                        Xem tất cả <i class="bi bi-arrow-right ml-1"></i>
                     </a>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-6 col-md-4 col-lg-3 col-xl-2" th:each="book : ${books}">
-                        <div class="card h-100 book-card">
-                            <!-- Hình ảnh sách -->
-                            <div class="position-relative" style="height: 140px; overflow: hidden;">
-                                <!-- Nếu có hình ảnh -->
-                                <img th:if="${book.imageUrl != null && !book.imageUrl.isEmpty()}"
-                                    th:src="${book.imageUrl}" th:alt="${book.title}" class="card-img-top w-100 h-100"
-                                    style="object-fit: cover;"
-                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <!-- Placeholder nếu không có hình -->
-                                <div th:if="${book.imageUrl == null || book.imageUrl.isEmpty()}"
-                                    class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
-                                    style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                                    <i class="bi bi-book fs-1"></i>
-                                </div>
-                                <!-- Hidden placeholder for error fallback -->
-                                <div class="w-100 h-100 align-items-center justify-content-center text-white position-absolute top-0"
-                                    style="background: linear-gradient(135deg, #667eea, #764ba2); display: none;">
-                                    <i class="bi bi-book fs-1"></i>
-                                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div th:each="book : ${books}" class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden card-hover">
+                        <!-- Hình ảnh sách -->
+                        <div class="relative h-36 overflow-hidden">
+                            <!-- Nếu có hình ảnh -->
+                            <img th:if="${book.imageUrl != null && !book.imageUrl.isEmpty()}"
+                                th:src="${book.imageUrl}" th:alt="${book.title}" class="w-full h-full object-cover"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <!-- Placeholder nếu không có hình -->
+                            <div th:if="${book.imageUrl == null || book.imageUrl.isEmpty()}"
+                                class="w-full h-full flex items-center justify-center text-white bg-gray-600">
+                                <i class="bi bi-book text-4xl"></i>
                             </div>
+                            <!-- Hidden placeholder for error fallback -->
+                            <div class="w-full h-full absolute top-0 flex items-center justify-center text-white bg-gray-600" style="display: none;">
+                                <i class="bi bi-book text-4xl"></i>
+                            </div>
+                        </div>
 
-                            <div class="card-body p-2">
-                                <h6 class="card-title mb-1 text-truncate" th:text="${book.title}"
-                                    th:title="${book.title}">
-                                    Tên sách
-                                </h6>
-                                <p class="card-text small text-muted mb-1 text-truncate" th:text="${book.author}">
-                                    Tác giả
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-danger fw-bold small"
-                                        th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
-                                        100,000 đ
-                                    </span>
-                                    <span th:class="${book.stock > 0} ? 'badge bg-success' : 'badge bg-danger'"
-                                        th:text="${book.stock > 0} ? 'Còn hàng' : 'Hết hàng'"
-                                        style="font-size: 0.65rem;">
-                                        Còn hàng
-                                    </span>
-                                </div>
+                        <div class="p-3">
+                            <h6 class="font-medium text-gray-900 text-sm mb-1 truncate" th:text="${book.title}" th:title="${book.title}">
+                                Tên sách
+                            </h6>
+                            <p class="text-xs text-gray-500 mb-2 truncate" th:text="${book.author}">
+                                Tác giả
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-red-600 font-bold text-sm"
+                                    th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    100,000 đ
+                                </span>
+                                <span th:class="${book.stock > 0} ? 'px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium' : 'px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium'"
+                                    th:text="${book.stock > 0} ? 'Còn hàng' : 'Hết hàng'">
+                                    Còn hàng
+                                </span>
                             </div>
+                        </div>
 
-                            <div class="card-footer bg-transparent border-0 p-2 pt-0">
-                                <div class="d-flex gap-1">
-                                    <a th:href="@{/sach/chi-tiet/{id}(id=${book.id})}"
-                                        class="btn btn-outline-primary btn-sm flex-grow-1">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <form th:action="@{/giohang/them}" method="post" class="flex-grow-1"
-                                        sec:authorize="isAuthenticated()">
-                                        <input type="hidden" name="bookId" th:value="${book.id}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit" class="btn btn-primary btn-sm w-100"
-                                            th:disabled="${book.stock <= 0}">
-                                            <i class="bi bi-cart-plus"></i>
-                                        </button>
-                                    </form>
-                                    <a th:href="@{/dangnhap}" class="btn btn-primary btn-sm flex-grow-1"
-                                        sec:authorize="!isAuthenticated()">
-                                        <i class="bi bi-cart-plus"></i>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="px-3 pb-3 pt-0 flex gap-2">
+                            <a th:href="@{/sach/chi-tiet/{id}(id=${book.id})}"
+                                class="flex-1 px-2 py-1.5 text-xs font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-all">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <form th:action="@{/giohang/them}" method="post" class="flex-1" sec:authorize="isAuthenticated()">
+                                <input type="hidden" name="bookId" th:value="${book.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="w-full px-2 py-1.5 text-xs font-medium bg-gray-800 text-white rounded hover:bg-gray-900 transition-all" th:disabled="${book.stock <= 0}">
+                                    <i class="bi bi-cart-plus"></i>
+                                </button>
+                            </form>
+                            <a th:href="@{/dangnhap}" class="flex-1 px-2 py-1.5 text-xs font-medium bg-gray-800 text-white rounded hover:bg-gray-900 transition-all" sec:authorize="!isAuthenticated()">
+                                <i class="bi bi-cart-plus"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -205,18 +157,18 @@
         </section>
 
         <!-- ============================================ -->
-        <!-- DANH MỤC (Categories) -->
+        <!-- DANH MỤC (Categories) - Chỉ Admin -->
         <!-- ============================================ -->
-        <section class="py-4" th:if="${categories != null && !categories.isEmpty()}">
-            <div class="container">
-                <h3 class="mb-3">
-                    <i class="bi bi-tags me-2"></i>Danh mục sách
+        <section class="py-6" th:if="${categories != null && !categories.isEmpty()}" sec:authorize="hasRole('ADMIN')">
+            <div class="container mx-auto px-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                    <i class="bi bi-tags mr-2"></i>Danh mục sách
                 </h3>
 
-                <div class="d-flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2">
                     <a th:each="cat : ${categories}" th:href="@{/sach(categoryId=${cat.id})}"
-                        class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-folder me-1"></i>
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:border-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-all">
+                        <i class="bi bi-folder mr-1"></i>
                         <span th:text="${cat.name}">Danh mục</span>
                     </a>
                 </div>
@@ -226,158 +178,153 @@
         <!-- ============================================ -->
         <!-- NHÓM CHỨC NĂNG (Functional Groups) -->
         <!-- ============================================ -->
-        <section class="py-5">
-            <div class="container">
-                <h2 class="text-center mb-5">
-                    <i class="bi bi-grid-3x3-gap me-2"></i>Các chức năng chính
+        <section class="py-8">
+            <div class="container mx-auto px-4">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">
+                    <i class="bi bi-grid-3x3-gap mr-2"></i>Các chức năng chính
                 </h2>
 
-                <div class="row g-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                    <!-- ===== 1. Quản lý Sách ===== -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card feature-card shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon text-primary">
-                                    <i class="bi bi-journal-bookmark"></i>
-                                </div>
-                                <h4 class="card-title">Quản lý Sách</h4>
-                                <p class="card-text text-muted">
+                    <!-- ===== 1. Quản lý Sách - Chỉ Admin ===== -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-journal-bookmark text-2xl text-gray-700"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Quản lý Sách</h4>
+                                <p class="text-sm text-gray-600 mb-4">
                                     Xem, thêm, sửa, xóa thông tin sách trong hệ thống.
                                     Quản lý tồn kho và theo dõi số lượng.
                                 </p>
-                                <a th:href="@{/sach}" class="btn btn-primary">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                <a th:href="@{/sach}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                                    Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ===== 2. Quản lý Danh mục ===== -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card feature-card shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon text-success">
-                                    <i class="bi bi-tags"></i>
-                                </div>
-                                <h4 class="card-title">Quản lý Danh mục</h4>
-                                <p class="card-text text-muted">
+                    <!-- ===== 2. Quản lý Danh mục - Chỉ Admin ===== -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-tags text-2xl text-green-600"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Quản lý Danh mục</h4>
+                                <p class="text-sm text-gray-600 mb-4">
                                     Tổ chức sách theo danh mục, thể loại.
                                     Dễ dàng phân loại và tìm kiếm sách.
                                 </p>
-                                <a th:href="@{/danhmuc}" class="btn btn-success">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                <a th:href="@{/danhmuc}" class="inline-flex items-center text-sm font-medium text-green-600 hover:text-green-700">
+                                    Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ===== 3. Mua hàng ===== -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card feature-card shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon text-info">
-                                    <i class="bi bi-cart-check"></i>
-                                </div>
-                                <h4 class="card-title">Mua hàng</h4>
-                                <p class="card-text text-muted">
+                    <!-- ===== 3. Mua hàng - Chỉ User (Không phải Admin) ===== -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-cart-check text-2xl text-sky-600"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Mua hàng</h4>
+                                <p class="text-sm text-gray-600 mb-4">
                                     Đặt hàng, quản lý giỏ hàng và theo dõi đơn hàng.
                                     Thanh toán nhanh chóng và tiện lợi.
                                 </p>
 
-                                <!-- Chưa đăng nhập -->
-                                <span sec:authorize="!isAuthenticated()">
-                                    <a th:href="@{/dangnhap}" class="btn btn-outline-info">
-                                        <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập để mua
+                                <!-- Đã đăng nhập (User) -->
+                                <div>
+                                    <a th:href="@{/muahang}" class="inline-flex items-center text-sm font-medium text-sky-600 hover:text-sky-700">
+                                        Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                     </a>
-                                </span>
-
-                                <!-- Đã đăng nhập -->
-                                <span sec:authorize="isAuthenticated()">
-                                    <a th:href="@{/muahang}" class="btn btn-info text-white">
-                                        <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
-                                    </a>
-                                </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- ===== 4. Quản lý Người dùng (ADMIN ONLY) ===== -->
-                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
-                        <div class="card feature-card shadow-sm h-100 admin-card">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon">
-                                    <i class="bi bi-people"></i>
+                    <div class="bg-white rounded-xl shadow-sm border-2 border-amber-200 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-people text-2xl text-amber-600"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-lg font-semibold text-gray-900">Quản lý Người dùng</h4>
+                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">ADMIN</span>
                                 </div>
-                                <h4 class="card-title">Quản lý Người dùng</h4>
-                                <p class="card-text text-muted">
+                                <p class="text-sm text-gray-600 mb-4">
                                     Quản lý tài khoản người dùng, phân quyền và
                                     thiết lập vai trò trong hệ thống.
                                 </p>
-                                <a th:href="@{/nguoidung}" class="btn btn-warning">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                <a th:href="@{/nguoidung}" class="inline-flex items-center text-sm font-medium text-amber-600 hover:text-amber-700">
+                                    Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                 </a>
-                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- ===== 5. Quản trị (ADMIN ONLY) ===== -->
-                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
-                        <div class="card feature-card shadow-sm h-100 admin-card">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon">
-                                    <i class="bi bi-shield-lock"></i>
+                    <div class="bg-white rounded-xl shadow-sm border-2 border-amber-200 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-shield-lock text-2xl text-amber-600"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-lg font-semibold text-gray-900">Quản trị (Admin)</h4>
+                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">ADMIN</span>
                                 </div>
-                                <h4 class="card-title">Quản trị (Admin)</h4>
-                                <p class="card-text text-muted">
+                                <p class="text-sm text-gray-600 mb-4">
                                     Bảng điều khiển quản trị viên. Thống kê, báo cáo
                                     và các cài đặt hệ thống.
                                 </p>
-                                <a th:href="@{/quantri}" class="btn btn-warning">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                <a th:href="@{/quantri}" class="inline-flex items-center text-sm font-medium text-amber-600 hover:text-amber-700">
+                                    Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                 </a>
-                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- ===== 6. API / Tài liệu (ADMIN ONLY) ===== -->
-                    <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
-                        <div class="card feature-card shadow-sm h-100 admin-card">
-                            <div class="card-body text-center p-4">
-                                <div class="feature-icon">
-                                    <i class="bi bi-code-slash"></i>
+                    <div class="bg-white rounded-xl shadow-sm border-2 border-amber-200 overflow-hidden hover:shadow-md transition-shadow group" sec:authorize="hasRole('ADMIN')">
+                        <div class="flex items-start p-6">
+                            <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-code-slash text-2xl text-amber-600"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h4 class="text-lg font-semibold text-gray-900">API / Tài liệu</h4>
+                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">ADMIN</span>
                                 </div>
-                                <h4 class="card-title">API / Tài liệu</h4>
-                                <p class="card-text text-muted">
+                                <p class="text-sm text-gray-600 mb-4">
                                     Tài liệu API RESTful, Swagger UI và hướng dẫn
                                     tích hợp cho developer.
                                 </p>
-                                <a th:href="@{/apidocs}" class="btn btn-warning">
-                                    <i class="bi bi-arrow-right-circle me-1"></i>Truy cập
+                                <a th:href="@{/apidocs}" class="inline-flex items-center text-sm font-medium text-amber-600 hover:text-amber-700">
+                                    Truy cập <i class="bi bi-arrow-right ml-1"></i>
                                 </a>
-                                <span class="badge bg-warning text-dark ms-2">ADMIN</span>
                             </div>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Thông báo cho người chưa đăng nhập về các chức năng bị ẩn -->
-                <div sec:authorize="!isAuthenticated()" class="mt-5">
-                    <div class="alert alert-secondary text-center">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Lưu ý:</strong> Một số chức năng yêu cầu đăng nhập để sử dụng.
-                        <a th:href="@{/dangnhap}" class="alert-link">Đăng nhập ngay</a> để trải nghiệm đầy đủ!
-                    </div>
-                </div>
-
-                <!-- Thông báo cho User thường về các chức năng Admin -->
-                <div sec:authorize="isAuthenticated() and !hasRole('ADMIN')" class="mt-5">
-                    <div class="alert alert-secondary text-center">
-                        <i class="bi bi-shield-exclamation me-2"></i>
-                        <strong>Lưu ý:</strong> Một số chức năng quản trị chỉ dành cho tài khoản Admin.
+                <!-- Thông báo cho người chưa đăng nhập -->
+                <div sec:authorize="!isAuthenticated()" class="mt-10">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="bi bi-info-circle text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Chào mừng bạn đến với Nhà sách!</h3>
+                        <p class="text-gray-600 mb-4">
+                            Vui lòng <a th:href="@{/dangnhap}" class="text-blue-600 font-medium hover:text-blue-700 ml-1">đăng nhập</a> để mua hàng và sử dụng đầy đủ chức năng.
+                        </p>
                     </div>
                 </div>
 
@@ -387,39 +334,31 @@
         <!-- ============================================ -->
         <!-- QUICK STATS SECTION -->
         <!-- ============================================ -->
-        <section class="bg-light py-5">
-            <div class="container">
-                <h3 class="text-center mb-4">
-                    <i class="bi bi-bar-chart me-2"></i>Thống kê nhanh từ MongoDB
+        <section class="bg-gray-50 py-8">
+            <div class="container mx-auto px-4">
+                <h3 class="text-xl font-bold text-center text-gray-800 mb-6">
+                    <i class="bi bi-bar-chart mr-2"></i>Thống kê nhanh từ MongoDB
                 </h3>
-                <div class="row text-center g-4">
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 bg-white rounded shadow-sm">
-                            <div class="display-6 text-primary fw-bold" th:text="${totalBooks}">0</div>
-                            <div class="text-muted">Tổng số sách</div>
-                        </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div class="text-3xl lg:text-4xl font-bold text-gray-800" th:text="${totalBooks}">0</div>
+                        <div class="text-gray-600 text-sm mt-1">Tổng số sách</div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 bg-white rounded shadow-sm">
-                            <div class="display-6 text-success fw-bold" th:text="${totalCategories}">0</div>
-                            <div class="text-muted">Danh mục</div>
-                        </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div class="text-3xl lg:text-4xl font-bold text-green-600" th:text="${totalCategories}">0</div>
+                        <div class="text-gray-600 text-sm mt-1">Danh mục</div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 bg-white rounded shadow-sm">
-                            <div class="display-6 text-info fw-bold" th:text="${totalOrders}">0</div>
-                            <div class="text-muted">Đơn hàng</div>
-                        </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div class="text-3xl lg:text-4xl font-bold text-sky-600" th:text="${totalOrders}">0</div>
+                        <div class="text-gray-600 text-sm mt-1">Đơn hàng</div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 bg-white rounded shadow-sm">
-                            <div class="display-6 text-warning fw-bold" th:text="${totalUsers}">0</div>
-                            <div class="text-muted">Người dùng</div>
-                        </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                        <div class="text-3xl lg:text-4xl font-bold text-yellow-600" th:text="${totalUsers}">0</div>
+                        <div class="text-gray-600 text-sm mt-1">Người dùng</div>
                     </div>
                 </div>
-                <p class="text-center text-success mt-3 small">
-                    <i class="bi bi-check-circle-fill me-1"></i>
+                <p class="text-center text-green-600 mt-4 text-sm">
+                    <i class="bi bi-check-circle-fill mr-1"></i>
                     Đã kết nối MongoDB - Dữ liệu được lưu trữ thực
                 </p>
             </div>
@@ -432,22 +371,6 @@
 
     <!-- Include Scripts -->
     <th:block th:insert="~{layout :: scripts}"></th:block>
-
-    <!-- Page-specific scripts -->
-    <script>
-        // Auto-dismiss alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function () {
-            const alerts = document.querySelectorAll('.alert-dismissible');
-            alerts.forEach(function (alert) {
-                setTimeout(function () {
-                    if (alert && typeof bootstrap !== 'undefined') {
-                        const bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    }
-                }, 5000);
-            });
-        });
-    </script>
 
 </body>
 

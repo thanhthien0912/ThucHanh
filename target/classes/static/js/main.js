@@ -2,8 +2,8 @@
  * Main JavaScript - Hệ thống Quản lý Nhà sách
  * Author: Phan Thanh Thien - MSSV: 2280603036
  * Course: CMP3025 - J2EE
- * 
- * Enhanced with modern animations and interactions
+ *
+ * Modern JavaScript with Tailwind CSS support
  */
 
 // ============================================
@@ -13,52 +13,14 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Bookstore Management System initialized');
 
     // Initialize all components
-    initTooltips();
-    initAutoAlerts();
     initScrollAnimations();
     initCardAnimations();
     initNavbarEffects();
     initFormEnhancements();
-    initTableHovers();
     initCounterAnimations();
     initRippleEffect();
+    initAutoDismissAlerts();
 });
-
-// ============================================
-// TOOLTIPS
-// ============================================
-function initTooltips() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(element => {
-        new bootstrap.Tooltip(element, {
-            animation: true,
-            delay: { show: 300, hide: 100 }
-        });
-    });
-}
-
-// ============================================
-// AUTO-DISMISS ALERTS
-// ============================================
-function initAutoAlerts(timeout = 5000) {
-    const alerts = document.querySelectorAll('.alert-dismissible');
-    alerts.forEach(function (alert, index) {
-        // Stagger the dismissal for multiple alerts
-        setTimeout(function () {
-            if (alert && typeof bootstrap !== 'undefined') {
-                // Add fade-out animation
-                alert.style.transition = 'all 0.5s ease';
-                alert.style.opacity = '0';
-                alert.style.transform = 'translateX(100px)';
-
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 500);
-            }
-        }, timeout + (index * 500));
-    });
-}
 
 // ============================================
 // SCROLL ANIMATIONS (Intersection Observer)
@@ -72,38 +34,18 @@ function initScrollAnimations() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
+                entry.target.classList.add('animate-fadeIn');
                 observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
-    // Observe elements
-    const animateElements = document.querySelectorAll('.card, .feature-card, .alert, .table');
+    // Observe elements with animate-on-scroll class
+    const animateElements = document.querySelectorAll('.animate-on-scroll, .card, .feature-card');
     animateElements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
         observer.observe(el);
     });
-
-    // Add CSS for animation
-    const style = document.createElement('style');
-    style.textContent = `
-        .animate-in {
-            animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    `;
-    document.head.appendChild(style);
 }
 
 // ============================================
@@ -113,11 +55,7 @@ function initCardAnimations() {
     const cards = document.querySelectorAll('.card, .feature-card');
 
     cards.forEach(card => {
-        card.addEventListener('mouseenter', function (e) {
-            // Create glow effect
-            this.style.setProperty('--glow-x', `${e.offsetX}px`);
-            this.style.setProperty('--glow-y', `${e.offsetY}px`);
-        });
+        if (!card.classList.contains('card-hover')) return;
 
         card.addEventListener('mousemove', function (e) {
             const rect = this.getBoundingClientRect();
@@ -130,7 +68,7 @@ function initCardAnimations() {
             const tiltX = (y - centerY) / 20;
             const tiltY = (centerX - x) / 20;
 
-            this.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px)`;
+            this.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-4px)`;
         });
 
         card.addEventListener('mouseleave', function () {
@@ -143,7 +81,7 @@ function initCardAnimations() {
 // NAVBAR EFFECTS
 // ============================================
 function initNavbarEffects() {
-    const navbar = document.querySelector('.navbar');
+    const navbar = document.querySelector('nav.sticky-top, nav.sticky');
     if (!navbar) return;
 
     let lastScroll = 0;
@@ -153,12 +91,12 @@ function initNavbarEffects() {
 
         // Add shadow on scroll
         if (currentScroll > 10) {
-            navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.3)';
+            navbar.classList.add('shadow-md');
         } else {
-            navbar.style.boxShadow = '';
+            navbar.classList.remove('shadow-md');
         }
 
-        // Hide/show navbar on scroll (optional)
+        // Hide/show navbar on scroll
         if (currentScroll > lastScroll && currentScroll > 100) {
             navbar.style.transform = 'translateY(-100%)';
         } else {
@@ -175,30 +113,16 @@ function initNavbarEffects() {
 // FORM ENHANCEMENTS
 // ============================================
 function initFormEnhancements() {
-    // Floating label effect
-    const inputs = document.querySelectorAll('.form-control, .form-select');
+    // Focus animations
+    const inputs = document.querySelectorAll('input, textarea, select');
 
     inputs.forEach(input => {
-        // Add focus animation
         input.addEventListener('focus', function () {
             this.parentElement.classList.add('input-focused');
         });
 
         input.addEventListener('blur', function () {
             this.parentElement.classList.remove('input-focused');
-            if (this.value) {
-                this.classList.add('has-value');
-            } else {
-                this.classList.remove('has-value');
-            }
-        });
-
-        // Validate on input
-        input.addEventListener('input', function () {
-            if (this.checkValidity()) {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            }
         });
     });
 
@@ -206,11 +130,29 @@ function initFormEnhancements() {
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function (e) {
-            const submitBtn = this.querySelector('[type="submit"]');
+            const submitBtn = this.querySelector('button[type="submit"], input[type="submit"]');
             if (submitBtn && !submitBtn.classList.contains('no-loading')) {
                 const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+                submitBtn.innerHTML = '<span class="spinner mr-2"></span>Đang xử lý...';
                 submitBtn.disabled = true;
+
+                // Add spinner animation inline
+                const style = document.createElement('style');
+                style.textContent = `
+                    .spinner {
+                        display: inline-block;
+                        width: 16px;
+                        height: 16px;
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-top-color: currentColor;
+                        border-radius: 50%;
+                        animation: spin 0.8s linear infinite;
+                    }
+                    @keyframes spin {
+                        to { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
 
                 // Re-enable after 10 seconds (failsafe)
                 setTimeout(() => {
@@ -223,28 +165,10 @@ function initFormEnhancements() {
 }
 
 // ============================================
-// TABLE HOVER EFFECTS
-// ============================================
-function initTableHovers() {
-    const tableRows = document.querySelectorAll('.table tbody tr');
-
-    tableRows.forEach(row => {
-        row.addEventListener('mouseenter', function () {
-            this.style.backgroundColor = 'rgba(102, 126, 234, 0.08)';
-            this.style.transition = 'all 0.2s ease';
-        });
-
-        row.addEventListener('mouseleave', function () {
-            this.style.backgroundColor = '';
-        });
-    });
-}
-
-// ============================================
 // COUNTER ANIMATIONS
 // ============================================
 function initCounterAnimations() {
-    const counters = document.querySelectorAll('.display-6, h3[th\\:text]');
+    const counters = document.querySelectorAll('.display-6, .text-3xl, .text-4xl');
 
     counters.forEach(counter => {
         const text = counter.textContent;
@@ -282,7 +206,7 @@ function animateCounter(element, start, end, duration) {
 // RIPPLE EFFECT FOR BUTTONS
 // ============================================
 function initRippleEffect() {
-    const buttons = document.querySelectorAll('.btn');
+    const buttons = document.querySelectorAll('.btn-glow');
 
     buttons.forEach(button => {
         button.addEventListener('click', function (e) {
@@ -293,37 +217,50 @@ function initRippleEffect() {
             const ripple = document.createElement('span');
             ripple.style.cssText = `
                 position: absolute;
+                top: 50%;
+                left: 50%;
                 width: 0;
                 height: 0;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.4);
+                background: rgba(255, 255, 255, 0.3);
                 transform: translate(-50%, -50%);
-                animation: ripple 0.6s ease-out;
-                left: ${x}px;
-                top: ${y}px;
+                transition: width 0.6s, height 0.6s;
                 pointer-events: none;
             `;
 
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
             this.appendChild(ripple);
+
+            requestAnimationFrame(() => {
+                ripple.style.width = '300px';
+                ripple.style.height = '300px';
+                ripple.style.opacity = '0';
+            });
 
             setTimeout(() => ripple.remove(), 600);
         });
     });
+}
 
-    // Add ripple animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                width: 300px;
-                height: 300px;
-                opacity: 0;
-            }
+// ============================================
+// AUTO-DISMISS ALERTS
+// ============================================
+function initAutoDismissAlerts(timeout = 5000) {
+    const alerts = document.querySelectorAll('.animate-fadeIn');
+    alerts.forEach(function (alert, index) {
+        if (alert.textContent.trim()) {
+            setTimeout(function () {
+                if (alert && alert.style) {
+                    alert.style.transition = 'all 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateX(100px)';
+
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500);
+                }
+            }, timeout + (index * 500));
         }
-    `;
-    document.head.appendChild(style);
+    });
 }
 
 // ============================================
@@ -331,7 +268,7 @@ function initRippleEffect() {
 // ============================================
 
 /**
- * Confirm delete action with custom modal
+ * Confirm delete action
  */
 function confirmDelete(itemName) {
     return confirm(`⚠️ Bạn có chắc chắn muốn xóa "${itemName}"?\n\nHành động này không thể hoàn tác!`);
@@ -348,36 +285,57 @@ function formatCurrency(amount) {
 }
 
 /**
- * Show toast notification
+ * Show toast notification (custom implementation for Tailwind)
  */
 function showToast(message, type = 'info') {
-    const toastContainer = document.getElementById('toast-container') || createToastContainer();
+    // Remove existing toasts if too many
+    const existingToasts = document.querySelectorAll('.toast');
+    if (existingToasts.length > 5) {
+        existingToasts[0].remove();
+    }
 
     const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
-    toast.setAttribute('role', 'alert');
+    const typeClasses = {
+        success: 'toast-success',
+        error: 'toast-error',
+        info: 'toast-info',
+        warning: 'toast-warning'
+    };
+
+    const typeIcons = {
+        success: 'bi-check-circle',
+        error: 'bi-exclamation-circle',
+        info: 'bi-info-circle',
+        warning: 'bi-exclamation-triangle'
+    };
+
+    toast.className = `toast ${typeClasses[type] || 'toast-info'}`;
     toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="toast-icon">
+            <i class="bi ${typeIcons[type] || typeIcons.info}"></i>
         </div>
+        <div class="toast-message">${message}</div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
     `;
+
+    // Add toast container if not exists
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        document.body.appendChild(toastContainer);
+    }
 
     toastContainer.appendChild(toast);
 
+    // Auto dismiss
     setTimeout(() => {
-        toast.classList.remove('show');
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100px)';
         setTimeout(() => toast.remove(), 300);
     }, 5000);
-}
-
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    return container;
 }
 
 /**
@@ -388,7 +346,7 @@ async function copyToClipboard(text) {
         await navigator.clipboard.writeText(text);
         showToast('Đã sao chép vào clipboard!', 'success');
     } catch (err) {
-        showToast('Không thể sao chép!', 'danger');
+        showToast('Không thể sao chép!', 'error');
     }
 }
 
@@ -403,12 +361,17 @@ document.addEventListener('keydown', function (e) {
         if (searchInput) searchInput.focus();
     }
 
-    // Escape: Close modals/dropdowns
+    // Escape: Close mobile menu
     if (e.key === 'Escape') {
-        const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
-        openDropdowns.forEach(dropdown => {
-            dropdown.classList.remove('show');
-        });
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            const menuIcon = document.getElementById('menuIcon');
+            if (menuIcon) {
+                menuIcon.classList.remove('bi-x-lg');
+                menuIcon.classList.add('bi-list');
+            }
+        }
     }
 });
 
@@ -416,13 +379,13 @@ document.addEventListener('keydown', function (e) {
 // DARK MODE SUPPORT (Future)
 // ============================================
 function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    document.body.classList.toggle('dark');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark'));
 }
 
 // Check saved preference
 if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
+    document.body.classList.add('dark');
 }
 
 console.log('✅ All JavaScript modules loaded successfully!');

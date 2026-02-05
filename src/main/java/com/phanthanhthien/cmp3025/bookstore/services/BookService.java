@@ -37,7 +37,7 @@ public class BookService {
     /**
      * Tìm sách theo ID
      */
-    public Optional<Book> findById(String id) {
+    public Optional<Book> findById(Long id) {
         return bookRepository.findById(id);
     }
 
@@ -59,7 +59,7 @@ public class BookService {
     /**
      * Xóa sách
      */
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         bookRepository.deleteById(id);
     }
 

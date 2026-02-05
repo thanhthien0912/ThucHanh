@@ -44,7 +44,7 @@ public class CartController {
      */
     @PostMapping("/them")
     public String addToCart(
-            @RequestParam String bookId,
+            @RequestParam Long bookId,
             @RequestParam(defaultValue = "1") int quantity,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
@@ -69,7 +69,7 @@ public class CartController {
      */
     @PostMapping("/capnhat")
     public String updateQuantity(
-            @RequestParam String bookId,
+            @RequestParam Long bookId,
             @RequestParam int quantity,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
@@ -94,7 +94,7 @@ public class CartController {
      */
     @PostMapping("/xoa")
     public String removeFromCart(
-            @RequestParam String bookId,
+            @RequestParam Long bookId,
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
 

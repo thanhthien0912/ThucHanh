@@ -4,6 +4,7 @@ import com.phanthanhthien.cmp3025.bookstore.entities.Book;
 import com.phanthanhthien.cmp3025.bookstore.entities.Category;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
+import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,9 +28,12 @@ public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
-    
+
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CounterService counterService;
 
     /**
      * Xem danh sách tất cả sách
@@ -89,6 +93,10 @@ public class BookController {
             return "sach/form";
         }
 
+        // Lấy ID tự động tăng cho sách mới
+        Long newId = counterService.getNextSequence("books");
+        book.setId(newId);
+
         bookRepository.save(book);
         redirectAttributes.addFlashAttribute("successMessage", 
                 "Thêm sách \"" + book.getTitle() + "\" thành công!");
@@ -100,12 +108,12 @@ public class BookController {
      * Hiển thị form sửa sách
      */
     @GetMapping("/sua/{id}")
-    public String editBookForm(@PathVariable String id, Model model, 
+    public String editBookForm(@PathVariable Long id, Model model,
                               RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
-        
+
         if (bookOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy sách với ID: " + id);
             return "redirect:/sach";
         }
@@ -115,7 +123,7 @@ public class BookController {
         model.addAttribute("book", bookOpt.get());
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("isEdit", true);
-        
+
         return "sach/form";
     }
 
@@ -124,12 +132,12 @@ public class BookController {
      */
     @PostMapping("/sua/{id}")
     public String updateBook(
-            @PathVariable String id,
+            @PathVariable Long id,
             @Valid @ModelAttribute("book") Book book,
             BindingResult result,
             Model model,
             RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("pageTitle", "Sửa thông tin sách");
             model.addAttribute("currentPage", "sach");
@@ -140,7 +148,7 @@ public class BookController {
 
         Optional<Book> existingBook = bookRepository.findById(id);
         if (existingBook.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy sách với ID: " + id);
             return "redirect:/sach";
         }
@@ -148,10 +156,10 @@ public class BookController {
         book.setId(id);
         book.onUpdate();
         bookRepository.save(book);
-        
-        redirectAttributes.addFlashAttribute("successMessage", 
+
+        redirectAttributes.addFlashAttribute("successMessage",
                 "Cập nhật sách \"" + book.getTitle() + "\" thành công!");
-        
+
         return "redirect:/sach";
     }
 
@@ -159,19 +167,19 @@ public class BookController {
      * Xóa sách
      */
     @GetMapping("/xoa/{id}")
-    public String deleteBook(@PathVariable String id, 
+    public String deleteBook(@PathVariable Long id,
                             RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
-        
+
         if (bookOpt.isPresent()) {
             bookRepository.deleteById(id);
-            redirectAttributes.addFlashAttribute("successMessage", 
+            redirectAttributes.addFlashAttribute("successMessage",
                     "Đã xóa sách \"" + bookOpt.get().getTitle() + "\"");
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy sách với ID: " + id);
         }
-        
+
         return "redirect:/sach";
     }
 
@@ -179,12 +187,12 @@ public class BookController {
      * Xem chi tiết sách
      */
     @GetMapping("/chi-tiet/{id}")
-    public String viewBook(@PathVariable String id, Model model,
+    public String viewBook(@PathVariable Long id, Model model,
                           RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
-        
+
         if (bookOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Không tìm thấy sách với ID: " + id);
             return "redirect:/sach";
         }
@@ -192,13 +200,13 @@ public class BookController {
         model.addAttribute("pageTitle", bookOpt.get().getTitle());
         model.addAttribute("currentPage", "sach");
         model.addAttribute("book", bookOpt.get());
-        
+
         // Lấy thông tin danh mục nếu có
         if (bookOpt.get().getCategoryId() != null) {
             categoryRepository.findById(bookOpt.get().getCategoryId())
                     .ifPresent(cat -> model.addAttribute("category", cat));
         }
-        
+
         return "sach/detail";
     }
 

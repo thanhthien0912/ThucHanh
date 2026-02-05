@@ -4,101 +4,107 @@
     <th:block th:insert="~{layout :: head}"></th:block>
     <title th:text="${pageTitle}">Thêm sách mới</title>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="flex flex-col min-h-screen">
 
     <header th:replace="~{layout :: header}"></header>
     <nav th:replace="~{layout :: navbar}"></nav>
 
     <main class="flex-grow-1">
-        <div class="container py-4">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/sach}">Quản lý Sách</a></li>
-                    <li class="breadcrumb-item active" th:text="${isEdit} ? 'Sửa sách' : 'Thêm sách mới'">Thêm sách mới</li>
+        <div class="container mx-auto px-4 py-6">
+            <!-- Breadcrumb -->
+            <nav class="text-sm mb-6">
+                <ol class="flex items-center gap-2">
+                    <li><a th:href="@{/}" class="text-gray-500 hover:text-gray-700">Trang chủ</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li><a th:href="@{/sach}" class="text-gray-500 hover:text-gray-700">Quản lý Sách</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-primary-600 font-medium" th:text="${isEdit} ? 'Sửa sách' : 'Thêm sách mới'">Thêm sách mới</li>
                 </ol>
             </nav>
 
-            <h2 class="mb-4">
-                <i class="bi bi-plus-circle me-2" th:if="!${isEdit}"></i>
-                <i class="bi bi-pencil me-2" th:if="${isEdit}"></i>
+            <!-- Header -->
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+                <i class="bi bi-plus-circle mr-2" th:if="!${isEdit}"></i>
+                <i class="bi bi-pencil mr-2" th:if="${isEdit}"></i>
                 <span th:text="${isEdit} ? 'Sửa thông tin sách' : 'Thêm sách mới'">Thêm sách mới</span>
             </h2>
 
-            <div class="card">
-                <div class="card-body">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+                <div class="p-6">
                     <form th:action="${isEdit} ? @{/sach/sua/{id}(id=${book.id})} : @{/sach/them}" 
-                          th:object="${book}" method="post">
+                          th:object="${book}" method="post" class="space-y-6">
                         
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="title" class="form-label">Tên sách <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="title" th:field="*{title}" 
-                                           placeholder="Nhập tên sách" required>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-                                </div>
+                        <!-- Row 1: Title & Author -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">Tên sách <span class="text-red-500">*</span></label>
+                                <input type="text" id="title" th:field="*{title}" 
+                                       placeholder="Nhập tên sách" required
+                                       class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="author" class="form-label">Tác giả <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="author" th:field="*{author}" 
-                                           placeholder="Nhập tên tác giả" required>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="categoryId" class="form-label">Danh mục</label>
-                                    <select class="form-select" id="categoryId" th:field="*{categoryId}">
-                                        <option value="">-- Chọn danh mục --</option>
-                                        <option th:each="cat : ${categories}" 
-                                                th:value="${cat.id}" 
-                                                th:text="${cat.name}"
-                                                th:selected="${book.categoryId == cat.id}">Danh mục</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="price" class="form-label">Giá (VNĐ) <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="price" th:field="*{price}" 
-                                           placeholder="0" min="0" step="1000" required>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="stock" class="form-label">Số lượng <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="stock" th:field="*{stock}" 
-                                           placeholder="0" min="0" required>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
-                                </div>
+                            <div>
+                                <label for="author" class="block text-sm font-semibold text-gray-700 mb-2">Tác giả <span class="text-red-500">*</span></label>
+                                <input type="text" id="author" th:field="*{author}" 
+                                       placeholder="Nhập tên tác giả" required
+                                       class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="description" th:field="*{description}" 
-                                      rows="3" placeholder="Mô tả về sách"></textarea>
+                        <!-- Row 2: Category, Price, Stock -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="categoryId" class="block text-sm font-semibold text-gray-700 mb-2">Danh mục</label>
+                                <select id="categoryId" th:field="*{categoryId}"
+                                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <option th:each="cat : ${categories}" 
+                                            th:value="${cat.id}" 
+                                            th:text="${cat.name}"
+                                            th:selected="${book.categoryId == cat.id}">Danh mục</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Giá (VNĐ) <span class="text-red-500">*</span></label>
+                                <input type="number" id="price" th:field="*{price}" 
+                                       placeholder="0" min="0" step="1000" required
+                                       class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                            </div>
+                            <div>
+                                <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Số lượng <span class="text-red-500">*</span></label>
+                                <input type="number" id="stock" th:field="*{stock}" 
+                                       placeholder="0" min="0" required
+                                       class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="imageUrl" class="form-label">URL Hình ảnh</label>
-                            <input type="url" class="form-control" id="imageUrl" th:field="*{imageUrl}" 
-                                   placeholder="https://example.com/image.jpg">
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
+                            <textarea id="description" th:field="*{description}" 
+                                      rows="3" placeholder="Mô tả về sách"
+                                      class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"></textarea>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save me-1"></i>
+                        <!-- Image URL -->
+                        <div>
+                            <label for="imageUrl" class="block text-sm font-semibold text-gray-700 mb-2">URL Hình ảnh</label>
+                            <input type="url" id="imageUrl" th:field="*{imageUrl}" 
+                                   placeholder="https://example.com/image.jpg"
+                                   class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex flex-wrap gap-3">
+                            <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                                <i class="bi bi-save mr-1"></i>
                                 <span th:text="${isEdit} ? 'Cập nhật' : 'Lưu sách'">Lưu sách</span>
                             </button>
-                            <a th:href="@{/sach}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Hủy
+                            <a th:href="@{/sach}" class="inline-flex items-center px-6 py-2.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all">
+                                <i class="bi bi-x-circle mr-1"></i>Hủy
                             </a>
                         </div>
                     </form>
