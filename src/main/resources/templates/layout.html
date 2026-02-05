@@ -134,10 +134,12 @@
             <div class="flex items-center gap-2 text-xs">
                 <!-- Chưa đăng nhập -->
                 <span sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
-                    <a th:href="@{/dangnhap}" class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all">
+                    <a th:href="@{/dangnhap}"
+                        class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all">
                         <i class="bi bi-box-arrow-in-right mr-1"></i>Đăng nhập
                     </a>
-                    <a th:href="@{/dangky}" class="px-3 py-1.5 bg-white text-primary-700 rounded-md hover:bg-primary-50 transition-all font-medium">
+                    <a th:href="@{/dangky}"
+                        class="px-3 py-1.5 bg-white text-primary-700 rounded-md hover:bg-primary-50 transition-all font-medium">
                         <i class="bi bi-person-plus mr-1"></i>Đăng ký
                     </a>
                 </span>
@@ -147,9 +149,11 @@
                     <span class="flex items-center">
                         <i class="bi bi-person-circle mr-1"></i>
                         Xin chào, <strong sec:authentication="name">User</strong>
-                        <span sec:authorize="hasRole('ADMIN')" class="ml-1 px-2 py-0.5 bg-warning-500 text-white text-xs rounded-full font-medium">ADMIN</span>
+                        <span sec:authorize="hasRole('ADMIN')"
+                            class="ml-1 px-2 py-0.5 bg-warning-500 text-white text-xs rounded-full font-medium">ADMIN</span>
                     </span>
-                    <a th:href="@{/dangxuat}" class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all">
+                    <a th:href="@{/dangxuat}"
+                        class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all">
                         <i class="bi bi-box-arrow-right mr-1"></i>Đăng xuất
                     </a>
                 </span>
@@ -170,130 +174,166 @@
             </a>
 
             <!-- Mobile menu button -->
-            <button class="lg:hidden p-2 text-gray-600 hover:text-primary-600 focus:outline-none" onclick="toggleMobileMenu()">
+            <button class="lg:hidden p-2 text-gray-600 hover:text-primary-600 focus:outline-none"
+                onclick="toggleMobileMenu()">
                 <i class="bi bi-list text-xl" id="menuIcon"></i>
             </button>
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center gap-1">
                 <!-- Trang chủ -->
-                <a th:href="@{/}" th:classappend="${currentPage == 'home'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
-                   class="px-3 py-2 rounded-md text-sm font-medium transition-all">
+                <a th:href="@{/}"
+                    th:classappend="${currentPage == 'home'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
+                    class="px-3 py-2 rounded-md text-sm font-medium transition-all">
                     <i class="bi bi-house-door mr-1"></i>Trang chủ
                 </a>
 
                 <!-- Quản lý Sách - Chỉ Admin -->
-                <a th:href="@{/sach}" th:classappend="${currentPage == 'sach'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
-                   class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/sach}"
+                    th:classappend="${currentPage == 'sach'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
+                    class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="hasRole('ADMIN')">
                     <i class="bi bi-journal-bookmark mr-1"></i>Sách
                 </a>
 
                 <!-- Quản lý Danh mục - Chỉ Admin -->
-                <a th:href="@{/danhmuc}" th:classappend="${currentPage == 'danhmuc'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
-                   class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/danhmuc}"
+                    th:classappend="${currentPage == 'danhmuc'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
+                    class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="hasRole('ADMIN')">
                     <i class="bi bi-tags mr-1"></i>Danh mục
                 </a>
 
+                <!-- Quản lý Đơn hàng - Chỉ Admin -->
+                <a th:href="@{/quantri/donhang}"
+                    th:classappend="${currentPage == 'donhang'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
+                    class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="hasRole('ADMIN')">
+                    <i class="bi bi-bag-check mr-1"></i>Đơn hàng
+                </a>
+
                 <!-- Giỏ hàng - Chỉ User (Không phải Admin) -->
-                <a th:href="@{/giohang}" th:classappend="${currentPage == 'cart'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
-                   class="px-3 py-2 rounded-md text-sm font-medium transition-all" sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
+                <a th:href="@{/giohang}"
+                    th:classappend="${currentPage == 'cart'} ? 'bg-primary-50 text-primary-700' : 'text-gray-700 hover:text-primary-600'"
+                    class="px-3 py-2 rounded-md text-sm font-medium transition-all"
+                    sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
                     <i class="bi bi-cart3 mr-1"></i>Giỏ hàng
                 </a>
 
                 <!-- Menu Admin - Chỉ hiển thị cho ADMIN -->
                 <div class="relative group" sec:authorize="hasRole('ADMIN')">
-                    <button class="px-3 py-2 rounded-md text-sm font-medium text-warning-600 hover:text-warning-700 transition-all flex items-center gap-1">
+                    <button
+                        class="px-3 py-2 rounded-md text-sm font-medium text-warning-600 hover:text-warning-700 transition-all flex items-center gap-1">
                         <i class="bi bi-gear mr-1"></i>Quản trị
                         <i class="bi bi-chevron-down text-xs"></i>
                     </button>
-                    <!-- Dropdown menu -->
-                    <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 hidden group-hover:block">
-                        <div class="py-1">
-                            <a th:href="@{/nguoidung}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="bi bi-people mr-2"></i>Quản lý Người dùng
-                            </a>
-                            <a th:href="@{/quantri}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="bi bi-shield-lock mr-2"></i>Bảng điều khiển Admin
-                            </a>
-                            <div class="border-t border-gray-100 my-1"></div>
-                            <a th:href="@{/apidocs}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                <i class="bi bi-code-slash mr-2"></i>API / Tài liệu
-                            </a>
+                    <!-- Dropdown menu - pt-0 để không có khoảng cách -->
+                    <div class="absolute right-0 top-full pt-1 w-56 hidden group-hover:block">
+                        <div class="bg-white rounded-lg shadow-lg border border-gray-100">
+                            <div class="py-1">
+                                <a th:href="@{/quantri/donhang}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-bag-check mr-2"></i>Quản lý Đơn hàng
+                                </a>
+                                <a th:href="@{/nguoidung}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-people mr-2"></i>Quản lý Người dùng
+                                </a>
+                                <a th:href="@{/quantri}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-shield-lock mr-2"></i>Bảng điều khiển Admin
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a th:href="@{/apidocs}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-code-slash mr-2"></i>API / Tài liệu
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Search Form - Chỉ Admin -->
-            <form th:action="@{/sach/timkiem}" method="get" class="hidden lg:flex items-center" sec:authorize="hasRole('ADMIN')">
-                <div class="relative">
-                    <input type="search" name="q" placeholder="Tìm kiếm sách..."
-                           class="w-48 px-3 py-1.5 pl-9 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all focus:w-64">
-                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                </div>
-                <button type="submit" class="ml-2 px-3 py-1.5 bg-primary-600 text-white rounded-full text-sm hover:bg-primary-700 transition-all">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- Mobile menu -->
-        <div id="mobileMenu" class="lg:hidden hidden pb-4">
-            <div class="flex flex-col gap-1">
-                <a th:href="@{/}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
-                    <i class="bi bi-house-door mr-2"></i>Trang chủ
-                </a>
-                <a th:href="@{/sach}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50" sec:authorize="hasRole('ADMIN')">
-                    <i class="bi bi-journal-bookmark mr-2"></i>Sách
-                </a>
-                <a th:href="@{/danhmuc}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50" sec:authorize="hasRole('ADMIN')">
-                    <i class="bi bi-tags mr-2"></i>Danh mục
-                </a>
-                <a th:href="@{/giohang}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50" sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
-                    <i class="bi bi-cart3 mr-2"></i>Giỏ hàng
-                </a>
-
-                <!-- Admin menu on mobile -->
-                <div sec:authorize="hasRole('ADMIN')">
-                    <div class="border-t border-gray-200 my-2"></div>
-                    <p class="px-3 py-1 text-xs font-semibold text-warning-600 uppercase">Quản trị</p>
-                    <a th:href="@{/nguoidung}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
-                        <i class="bi bi-people mr-2"></i>Quản lý Người dùng
-                    </a>
-                    <a th:href="@{/quantri}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
-                        <i class="bi bi-shield-lock mr-2"></i>Bảng điều khiển Admin
-                    </a>
-                    <a th:href="@{/apidocs}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
-                        <i class="bi bi-code-slash mr-2"></i>API / Tài liệu
-                    </a>
-                </div>
-
-                <!-- Mobile search - Chỉ Admin -->
-                <form th:action="@{/sach/timkiem}" method="get" class="mt-2" sec:authorize="hasRole('ADMIN')">
+                <!-- Search Form - Chỉ Admin -->
+                <form th:action="@{/sach/timkiem}" method="get" class="hidden lg:flex items-center"
+                    sec:authorize="hasRole('ADMIN')">
                     <div class="relative">
                         <input type="search" name="q" placeholder="Tìm kiếm sách..."
-                               class="w-full px-3 py-2 pl-9 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            class="w-48 px-3 py-1.5 pl-9 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all focus:w-64">
+                        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                     </div>
+                    <button type="submit"
+                        class="ml-2 px-3 py-1.5 bg-primary-600 text-white rounded-full text-sm hover:bg-primary-700 transition-all">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </form>
             </div>
-        </div>
-    </div>
 
-    <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const icon = document.getElementById('menuIcon');
-            menu.classList.toggle('hidden');
-            if (menu.classList.contains('hidden')) {
-                icon.classList.remove('bi-x-lg');
-                icon.classList.add('bi-list');
-            } else {
-                icon.classList.remove('bi-list');
-                icon.classList.add('bi-x-lg');
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="lg:hidden hidden pb-4">
+                <div class="flex flex-col gap-1">
+                    <a th:href="@{/}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                        <i class="bi bi-house-door mr-2"></i>Trang chủ
+                    </a>
+                    <a th:href="@{/sach}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                        sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-journal-bookmark mr-2"></i>Sách
+                    </a>
+                    <a th:href="@{/danhmuc}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                        sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-tags mr-2"></i>Danh mục
+                    </a>
+                    <a th:href="@{/giohang}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                        sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
+                        <i class="bi bi-cart3 mr-2"></i>Giỏ hàng
+                    </a>
+
+                    <!-- Admin menu on mobile -->
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <div class="border-t border-gray-200 my-2"></div>
+                        <p class="px-3 py-1 text-xs font-semibold text-warning-600 uppercase">Quản trị</p>
+                        <a th:href="@{/quantri/donhang}"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                            <i class="bi bi-bag-check mr-2"></i>Quản lý Đơn hàng
+                        </a>
+                        <a th:href="@{/nguoidung}"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                            <i class="bi bi-people mr-2"></i>Quản lý Người dùng
+                        </a>
+                        <a th:href="@{/quantri}"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                            <i class="bi bi-shield-lock mr-2"></i>Bảng điều khiển Admin
+                        </a>
+                        <a th:href="@{/apidocs}"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                            <i class="bi bi-code-slash mr-2"></i>API / Tài liệu
+                        </a>
+                    </div>
+
+                    <!-- Mobile search - Chỉ Admin -->
+                    <form th:action="@{/sach/timkiem}" method="get" class="mt-2" sec:authorize="hasRole('ADMIN')">
+                        <div class="relative">
+                            <input type="search" name="q" placeholder="Tìm kiếm sách..."
+                                class="w-full px-3 py-2 pl-9 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                const icon = document.getElementById('menuIcon');
+                menu.classList.toggle('hidden');
+                if (menu.classList.contains('hidden')) {
+                    icon.classList.remove('bi-x-lg');
+                    icon.classList.add('bi-list');
+                } else {
+                    icon.classList.remove('bi-list');
+                    icon.classList.add('bi-x-lg');
+                }
             }
-        }
-    </script>
+        </script>
 </nav>
 
 <!-- ============================================ -->
@@ -321,16 +361,20 @@
                         <a th:href="@{/}" class="text-gray-400 hover:text-primary-400 transition-colors">Trang chủ</a>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/sach}" class="text-gray-400 hover:text-primary-400 transition-colors">Danh sách sách</a>
+                        <a th:href="@{/sach}" class="text-gray-400 hover:text-primary-400 transition-colors">Danh sách
+                            sách</a>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/danhmuc}" class="text-gray-400 hover:text-primary-400 transition-colors">Danh mục</a>
+                        <a th:href="@{/danhmuc}" class="text-gray-400 hover:text-primary-400 transition-colors">Danh
+                            mục</a>
                     </li>
                     <li sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/quantri}" class="text-gray-400 hover:text-primary-400 transition-colors">Quản trị</a>
+                        <a th:href="@{/quantri}" class="text-gray-400 hover:text-primary-400 transition-colors">Quản
+                            trị</a>
                     </li>
                     <li sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
-                        <a th:href="@{/giohang}" class="text-gray-400 hover:text-primary-400 transition-colors">Giỏ hàng</a>
+                        <a th:href="@{/giohang}" class="text-gray-400 hover:text-primary-400 transition-colors">Giỏ
+                            hàng</a>
                     </li>
                 </ul>
             </div>

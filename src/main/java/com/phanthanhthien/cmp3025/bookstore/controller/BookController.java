@@ -5,14 +5,20 @@ import com.phanthanhthien.cmp3025.bookstore.entities.Category;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import com.phanthanhthien.cmp3025.bookstore.services.CounterService;
+import com.phanthanhthien.cmp3025.bookstore.services.ExcelExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +44,7 @@ public class BookController {
     /**
      * Xem danh sách tất cả sách
      */
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public String listBooks(Model model) {
         model.addAttribute("pageTitle", "Quản lý Sách");
         model.addAttribute("currentPage", "sach");
@@ -55,12 +61,12 @@ public class BookController {
         model.addAttribute("pageTitle", "Tìm kiếm: " + q);
         model.addAttribute("currentPage", "sach");
         model.addAttribute("keyword", q);
-        
+
         List<Book> searchResults = bookRepository
                 .findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(q, q);
         model.addAttribute("books", searchResults);
         model.addAttribute("totalBooks", searchResults.size());
-        
+
         return "sach/index";
     }
 
@@ -85,7 +91,7 @@ public class BookController {
             BindingResult result,
             Model model,
             RedirectAttributes redirectAttributes) {
-        
+
         if (result.hasErrors()) {
             model.addAttribute("pageTitle", "Thêm sách mới");
             model.addAttribute("currentPage", "sach");
@@ -98,9 +104,9 @@ public class BookController {
         book.setId(newId);
 
         bookRepository.save(book);
-        redirectAttributes.addFlashAttribute("successMessage", 
+        redirectAttributes.addFlashAttribute("successMessage",
                 "Thêm sách \"" + book.getTitle() + "\" thành công!");
-        
+
         return "redirect:/sach";
     }
 
@@ -109,7 +115,7 @@ public class BookController {
      */
     @GetMapping("/sua/{id}")
     public String editBookForm(@PathVariable Long id, Model model,
-                              RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
         if (bookOpt.isEmpty()) {
@@ -168,7 +174,7 @@ public class BookController {
      */
     @GetMapping("/xoa/{id}")
     public String deleteBook(@PathVariable Long id,
-                            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
         if (bookOpt.isPresent()) {
@@ -188,7 +194,7 @@ public class BookController {
      */
     @GetMapping("/chi-tiet/{id}")
     public String viewBook(@PathVariable Long id, Model model,
-                          RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<Book> bookOpt = bookRepository.findById(id);
 
         if (bookOpt.isEmpty()) {
@@ -208,6 +214,33 @@ public class BookController {
         }
 
         return "sach/detail";
+    }
+
+    @Autowired
+    private ExcelExportService excelExportService;
+
+    /**
+     * Xuất danh sách sách ra file Excel
+     */
+    @GetMapping("/xuat-excel")
+    public ResponseEntity<byte[]> exportToExcel() {
+        try {
+            byte[] excelData = excelExportService.exportBooksToExcel();
+
+            String filename = "DanhSachSach_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsx";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentDispositionFormData("attachment", filename);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelData);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

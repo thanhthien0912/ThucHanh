@@ -1,9 +1,12 @@
 package com.phanthanhthien.cmp3025.bookstore.config;
 
+import com.phanthanhthien.cmp3025.bookstore.security.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -13,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * SecurityConfig - Cấu hình Spring Security
@@ -36,6 +40,9 @@ public class SecurityConfig {
 
         @Autowired
         private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
+        @Autowired
+        private JwtAuthFilter jwtAuthFilter;
 
         /**
          * Cấu hình PasswordEncoder sử dụng BCrypt
@@ -73,6 +80,14 @@ public class SecurityConfig {
                                 .build();
 
                 return new InMemoryUserDetailsManager(user, admin);
+        }
+
+        /**
+         * Cấu hình AuthenticationManager cho JWT login
+         */
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
         }
 
         /**
@@ -167,7 +182,10 @@ public class SecurityConfig {
                                 .rememberMe(remember -> remember
                                                 .key("bookstore-remember-me-key")
                                                 .tokenValiditySeconds(86400) // 1 ngày
-                                );
+                                )
+
+                                // Thêm JWT filter trước UsernamePasswordAuthenticationFilter
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }

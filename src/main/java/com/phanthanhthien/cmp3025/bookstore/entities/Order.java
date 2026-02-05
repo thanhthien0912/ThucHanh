@@ -30,6 +30,8 @@ public class Order {
 
     private String paymentStatus; // PENDING, SUCCESS, FAILED
 
+    private String orderStatus; // PENDING, PROCESSING, SHIPPED, COMPLETED, CANCELLED
+
     private String momoTransId;
 
     private String momoRequestId;
@@ -149,5 +151,13 @@ public class Order {
 
     public void setPaidAt(LocalDateTime paidAt) {
         this.paidAt = paidAt;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
