@@ -6,7 +6,8 @@ import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.FindOneAndUpdateOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -50,7 +51,7 @@ public class CounterService {
         Bson filter = new Document("_id", collectionName);
         Bson update = Updates.inc("seq", 1L);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions()
-            .returnDocument(FindOneAndUpdateOptions.ReturnDocument.AFTER)
+            .returnDocument(ReturnDocument.AFTER)
             .upsert(true);
 
         Document result = counterCollection.findOneAndUpdate(filter, update, options);

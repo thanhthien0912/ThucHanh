@@ -32,6 +32,14 @@ public class Category {
     }
 
     // Constructor với tham số
+    public Category(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Constructor với tham số (tạo có ID)
     public Category(Long id, String name, String description) {
         this.id = id;
         this.name = name;

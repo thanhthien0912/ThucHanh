@@ -56,6 +56,19 @@ public class Book {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // Constructor với tham số (không có ID)
+    public Book(String title, String author, String description,
+                BigDecimal price, Integer stock, Long categoryId) {
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+        this.categoryId = categoryId;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     // Getters và Setters
     public Long getId() {
         return id;
