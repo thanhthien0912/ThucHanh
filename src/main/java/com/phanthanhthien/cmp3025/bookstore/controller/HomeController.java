@@ -3,6 +3,7 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,6 +92,15 @@ public class HomeController {
     public String register(Model model) {
         model.addAttribute("pageTitle", "Đăng ký tài khoản");
         return "register";
+    }
+
+    /**
+     * Xử lý request favicon.ico - Tránh lỗi log
+     * Trả về 204 No Content khi không có file favicon
+     */
+    @GetMapping("favicon.ico")
+    ResponseEntity<Void> favicon() {
+        return ResponseEntity.noContent().build();
     }
 
 }

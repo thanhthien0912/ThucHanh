@@ -82,17 +82,22 @@
                                 </tr>
                             </table>
 
-                            <div class="flex flex-wrap gap-3 mt-6">
+                            <div class="flex flex-wrap gap-3 mt-6" sec:authorize="hasRole('ADMIN')">
                                 <a th:href="@{/sach/sua/{id}(id=${book.id})}" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-all">
                                     <i class="bi bi-pencil mr-1"></i>Sửa
                                 </a>
-                                <a th:href="@{/sach/xoa/{id}(id=${book.id})}" 
+                                <a th:href="@{/sach/xoa/{id}(id=${book.id})}"
                                    class="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all"
                                    onclick="return confirm('Bạn có chắc muốn xóa sách này?')">
                                     <i class="bi bi-trash mr-1"></i>Xóa
                                 </a>
                                 <a th:href="@{/sach}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all">
                                     <i class="bi bi-arrow-left mr-1"></i>Quay lại
+                                </a>
+                            </div>
+                            <div class="mt-6" sec:authorize="!hasRole('ADMIN')">
+                                <a th:href="@{/}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                                    <i class="bi bi-arrow-left mr-1"></i>Quay lại trang chủ
                                 </a>
                             </div>
                         </div>

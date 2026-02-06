@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout :: head}"></head>
+
+<body>
+    <div th:replace="~{layout :: navbar}"></div>
+
+    <main class="container mx-auto px-4 py-6">
+        <!-- Tiêu đề -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                <i class="bi bi-receipt-cutoff mr-2"></i>Đơn hàng của tôi
+            </h2>
+            <nav class="text-sm mt-2">
+                <ol class="flex items-center gap-2">
+                    <li><a th:href="@{/}" class="text-gray-500 hover:text-gray-700">Trang chủ</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-primary-600 font-medium">Đơn hàng của tôi</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Thông báo -->
+        <div th:if="${error}" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-4">
+            <div class="flex items-center gap-2">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
+        </div>
+
+        <!-- Danh sách đơn hàng -->
+        <div th:if="${orders == null or orders.empty}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-8 text-center">
+            <i class="bi bi-inbox text-6xl text-gray-300"></i>
+            <h3 class="mt-4 text-xl font-semibold text-gray-700">Chưa có đơn hàng nào</h3>
+            <p class="text-gray-500 mt-2">Bạn chưa đặt đơn hàng nào. Hãy mua sắm ngay nhé!</p>
+            <a th:href="@{/}" class="inline-block mt-4 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all">
+                <i class="bi bi-cart mr-2"></i>Mua sắm ngay
+            </a>
+        </div>
+
+        <div th:if="${orders != null and !orders.empty}" class="space-y-4">
+            <div th:each="order : ${orders}" class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <!-- Header đơn hàng -->
+                <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <span class="text-xs text-gray-500">Mã đơn hàng</span>
+                            <p class="font-semibold text-gray-900" th:text="'#' + ${order.id}">ORD123456</p>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500">Ngày đặt</span>
+                            <p class="text-sm text-gray-700" th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</p>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500">Phương thức thanh toán</span>
+                            <p class="text-sm text-gray-700">
+                                <span th:if="${order.paymentMethod == 'MOMO'}">Ví MoMo</span>
+                                <span th:if="${order.paymentMethod == 'COD'}">Tiền mặt</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <!-- Trạng thái thanh toán -->
+                        <div class="text-center">
+                            <span class="block text-xs text-gray-500">Thanh toán</span>
+                            <span th:if="${order.paymentStatus == 'SUCCESS'}"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="bi bi-check-circle mr-1"></i>Thành công
+                            </span>
+                            <span th:if="${order.paymentStatus == 'PENDING'}"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="bi bi-clock mr-1"></i>Chờ thanh toán
+                            </span>
+                            <span th:if="${order.paymentStatus == 'FAILED'}"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <i class="bi bi-x-circle mr-1"></i>Thất bại
+                            </span>
+                        </div>
+
+                        <!-- Nút xem chi tiết -->
+                        <a th:href="@{/user/orders/{id}(id=${order.id})}"
+                            class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                            <i class="bi bi-eye mr-1"></i>Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Chi tiết đơn hàng -->
+                <div class="p-6">
+                    <!-- Voucher nếu có -->
+                    <div th:if="${order.voucherCode != null}" class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <i class="bi bi-ticket-perforated text-green-600"></i>
+                            <div>
+                                <span class="text-sm font-semibold text-green-800">Mã giảm giá đã áp dụng: </span>
+                                <span class="text-sm text-green-700 font-medium" th:text="${order.voucherCode}">WELCOME10</span>
+                                <span th:if="${order.discountAmount != null}"
+                                    class="text-xs text-green-600 ml-2">
+                                    (Giảm <span th:text="${#numbers.formatDecimal(order.discountAmount, 1, 'COMMA', 0, 'POINT')}"></span> đ)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sản phẩm -->
+                    <div class="divide-y divide-gray-100">
+                        <div th:each="item : ${order.items}" class="py-3 flex items-start gap-4">
+                            <div class="flex-shrink-0 w-12 h-16">
+                                <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}"
+                                    class="w-full h-full object-cover rounded">
+                                <div th:if="${item.imageUrl == null}"
+                                    class="w-full h-full flex items-center justify-center text-white bg-gradient-to-br from-primary-500 to-purple-500 rounded">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-900" th:text="${item.bookTitle}">Tên sách</h4>
+                                <p class="text-sm text-gray-500" th:text="${item.author}">Tác giả</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-sm text-gray-600">x<span th:text="${item.quantity}">1</span></span>
+                                    <span class="font-medium text-gray-900"
+                                        th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        100,000 đ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tổng tiền -->
+                    <div class="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+                        <div class="text-right">
+                            <div class="flex items-center justify-end gap-4 text-sm">
+                                <span class="text-gray-600">Tổng cộng:</span>
+                                <span class="font-semibold text-gray-900"
+                                    th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    100,000 đ
+                                </span>
+                            </div>
+                            <div th:if="${order.discountAmount != null}" class="flex items-center justify-end gap-4 text-sm">
+                                <span class="text-green-600">Giảm giá:</span>
+                                <span class="font-medium text-green-600"
+                                    th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 1, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    -10,000 đ
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-end gap-4 mt-2">
+                                <span class="text-lg font-semibold text-gray-800">Thành tiền:</span>
+                                <span class="text-lg font-bold text-red-600"
+                                    th:text="${#numbers.formatDecimal(order.finalAmount, 1, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    90,000 đ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+
+</html>

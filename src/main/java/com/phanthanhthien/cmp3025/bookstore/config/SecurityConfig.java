@@ -140,6 +140,9 @@ public class SecurityConfig {
                                                 .requestMatchers("/giohang/**").authenticated()
                                                 .requestMatchers("/thanhtoan/**").authenticated()
 
+                                                // Đơn hàng của user - yêu cầu đăng nhập
+                                                .requestMatchers("/user/orders/**").authenticated()
+
                                                 // Mua hàng - yêu cầu đăng nhập
                                                 .requestMatchers("/muahang/**").authenticated()
 

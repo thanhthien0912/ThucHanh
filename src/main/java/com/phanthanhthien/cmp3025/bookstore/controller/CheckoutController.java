@@ -2,9 +2,11 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 
 import com.phanthanhthien.cmp3025.bookstore.entities.Cart;
 import com.phanthanhthien.cmp3025.bookstore.entities.Order;
+import com.phanthanhthien.cmp3025.bookstore.entities.Voucher;
 import com.phanthanhthien.cmp3025.bookstore.repository.OrderRepository;
 import com.phanthanhthien.cmp3025.bookstore.services.CartService;
 import com.phanthanhthien.cmp3025.bookstore.services.MomoPaymentService;
+import com.phanthanhthien.cmp3025.bookstore.services.VoucherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Checkout Controller - Xử lý thanh toán
@@ -34,6 +39,9 @@ public class CheckoutController {
 
     @Autowired
     private MomoPaymentService momoPaymentService;
+
+    @Autowired
+    private VoucherService voucherService;
 
     /**
      * Trang thanh toán
@@ -62,7 +70,20 @@ public class CheckoutController {
      * Tạo đơn hàng và thanh toán MoMo
      */
     @PostMapping("/momo")
-    public String payWithMomo(Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String payWithMomo(
+            @RequestParam(required = false) String receiverName,
+            @RequestParam(required = false) String receiverPhone,
+            @RequestParam(required = false) String receiverAddress,
+            @RequestParam(required = false) String voucherCode,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        logger.info("=== Payment Request ===");
+        logger.info("Receiver Name: {}", receiverName);
+        logger.info("Receiver Phone: {}", receiverPhone);
+        logger.info("Receiver Address: {}", receiverAddress);
+        logger.info("Voucher Code: {}", voucherCode);
+
         if (authentication == null) {
             return "redirect:/dangnhap";
         }
@@ -76,12 +97,70 @@ public class CheckoutController {
                 return "redirect:/giohang";
             }
 
+            // Validate thông tin người nhận
+            if (receiverName == null || receiverName.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng nhập tên người nhận!");
+                return "redirect:/thanhtoan";
+            }
+            if (receiverPhone == null || receiverPhone.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng nhập số điện thoại!");
+                return "redirect:/thanhtoan";
+            }
+            if (receiverAddress == null || receiverAddress.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng nhập địa chỉ giao hàng!");
+                return "redirect:/thanhtoan";
+            }
+
+            // Tính tổng tiền và áp dụng voucher nếu có
+            BigDecimal totalAmount = cart.getTotalAmount();
+            BigDecimal discountAmount = BigDecimal.ZERO;
+            Voucher voucher = null;
+
+            logger.info("Cart Total Amount: {}", totalAmount);
+
+            if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+                logger.info("🔍 Validating voucher: {}", voucherCode);
+                // Validate voucher
+                Optional<Voucher> voucherOpt = voucherService.validateVoucher(voucherCode, totalAmount);
+                if (voucherOpt.isPresent()) {
+                    voucher = voucherOpt.get();
+                    discountAmount = voucherService.calculateDiscount(voucher, totalAmount);
+                    logger.info("✅ Voucher valid! Code: {}, Discount: {}", voucherCode, discountAmount);
+                } else {
+                    logger.warn("❌ Voucher invalid: {}", voucherCode);
+                    redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ!");
+                    return "redirect:/thanhtoan";
+                }
+            } else {
+                logger.info("ℹ️ No voucher code provided");
+            }
+
+            BigDecimal finalAmount = totalAmount.subtract(discountAmount);
+            logger.info("💰 Final Amount: {} (Total: {} - Discount: {})", finalAmount, totalAmount, discountAmount);
+
             // Tạo đơn hàng
-            Order order = new Order(userId, userId, cart.getItems(), cart.getTotalAmount());
+            Order order = new Order(userId, userId, cart.getItems(), totalAmount);
+            order.setReceiverName(receiverName);
+            order.setReceiverPhone(receiverPhone);
+            order.setReceiverAddress(receiverAddress);
+
+            if (voucher != null) {
+                order.setVoucherId(voucher.getId());
+                order.setVoucherCode(voucher.getCode());
+                order.setDiscountAmount(discountAmount);
+                order.setFinalAmount(finalAmount);
+
+                // Tăng số lần sử dụng voucher
+                voucherService.incrementUsage(voucher.getId());
+            } else {
+                order.setFinalAmount(totalAmount);
+            }
+
             order.setPaymentMethod("MOMO");
             order = orderRepository.save(order);
 
-            logger.info("📦 Tạo đơn hàng: {} với tổng tiền: {}", order.getId(), order.getTotalAmount());
+            logger.info("📦 Tạo đơn hàng: {} - Người nhận: {} - Tổng tiền: {} - Giảm: {} - Thành tiền: {}",
+                    order.getId(), receiverName, totalAmount, discountAmount, finalAmount);
 
             // Gọi API MoMo
             Map<String, Object> momoResponse = momoPaymentService.createPayment(order);
@@ -105,7 +184,7 @@ public class CheckoutController {
             return "redirect:/thanhtoan";
 
         } catch (Exception e) {
-            logger.error("❌ Lỗi thanh toán MoMo: {}", e.getMessage());
+            logger.error("❌ Lỗi thanh toán MoMo: ", e);
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
             return "redirect:/thanhtoan";
         }
@@ -168,7 +247,9 @@ public class CheckoutController {
      */
     @GetMapping("/thanhcong")
     public String orderSuccess(@RequestParam String orderId, Model model) {
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = (orderId != null && !orderId.isEmpty())
+                ? orderRepository.findById(orderId).orElse(null)
+                : null;
 
         model.addAttribute("order", order);
         model.addAttribute("pageTitle", "Đặt hàng thành công");
@@ -182,12 +263,75 @@ public class CheckoutController {
      */
     @GetMapping("/thatbai")
     public String orderFailed(@RequestParam String orderId, Model model) {
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = (orderId != null && !orderId.isEmpty())
+                ? orderRepository.findById(orderId).orElse(null)
+                : null;
 
         model.addAttribute("order", order);
         model.addAttribute("pageTitle", "Thanh toán thất bại");
         model.addAttribute("currentPage", "order-failed");
 
         return "order-failed";
+    }
+
+    /**
+     * API validate voucher (AJAX)
+     */
+    @PostMapping("/validate-voucher")
+    @ResponseBody
+    public Map<String, Object> validateVoucher(
+            @RequestBody Map<String, String> request,
+            Authentication authentication) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (authentication == null) {
+            response.put("success", false);
+            response.put("message", "Vui lòng đăng nhập");
+            return response;
+        }
+
+        try {
+            String code = request.getOrDefault("code", "");
+            String orderAmountStr = request.getOrDefault("orderAmount", "");
+
+            if (code == null || code.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Vui lòng nhập mã voucher");
+                return response;
+            }
+
+            BigDecimal orderAmount = (orderAmountStr != null && !orderAmountStr.isEmpty())
+                    ? new BigDecimal(orderAmountStr)
+                    : BigDecimal.ZERO;
+
+            // Validate voucher
+            Optional<Voucher> voucherOpt = voucherService.validateVoucher(code, orderAmount);
+
+            if (voucherOpt.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Mã voucher không hợp lệ hoặc đã hết hạn");
+                return response;
+            }
+
+            Voucher voucher = voucherOpt.get();
+            BigDecimal discountAmount = voucherService.calculateDiscount(voucher, orderAmount);
+            BigDecimal finalAmount = orderAmount.subtract(discountAmount);
+
+            response.put("success", true);
+            response.put("message", "Áp dụng voucher thành công");
+            response.put("voucher", voucher);
+            response.put("discountAmount", discountAmount);
+            response.put("finalAmount", finalAmount);
+
+            logger.info("✅ Voucher valid: {} - Discount: {}, Final: {}", code, discountAmount, finalAmount);
+
+        } catch (Exception e) {
+            logger.error("❌ Error validating voucher: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+
+        return response;
     }
 }

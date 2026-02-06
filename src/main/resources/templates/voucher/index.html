@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">Quản lý Voucher</title>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">
+                    <i class="bi bi-ticket-perforated mr-2"></i>Quản lý Voucher
+                </h2>
+                <a th:href="@{/quantri/voucher/them}"
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-1"></i>Thêm Voucher
+                </a>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}"
+                class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'"
+                        class="text-green-700 hover:text-green-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div th:if="${errorMessage}"
+                class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-4 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'"
+                        class="text-red-700 hover:text-red-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="mb-6">
+                <div class="bg-primary-600 text-white rounded-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-primary-200 text-sm font-medium mb-1">Tổng số Voucher</p>
+                            <h3 th:text="${totalVouchers}" class="text-3xl font-bold">0</h3>
+                        </div>
+                        <i class="bi bi-ticket-perforated text-4xl text-primary-300"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vouchers Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
+                th:if="${vouchers != null && !vouchers.isEmpty()}">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Mã Voucher</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Mô tả</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Giảm giá</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Đơn tối thiểu</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sử dụng</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Hạn sử dụng</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Trạng thái</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr th:each="voucher : ${vouchers}" class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="font-mono font-semibold text-primary-600" th:text="${voucher.code}"></span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900" th:text="${voucher.description}"></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-sm font-semibold text-green-600" th:text="${voucher.discountPercent} + '%'"></span>
+                                        <span th:if="${voucher.maxDiscountAmount != null}" class="text-xs text-gray-500">(tối đa <span th:text="${#numbers.formatDecimal(voucher.maxDiscountAmount, 1, 'COMMA', 0, 'POINT')} + ' đ'"></span>)</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span th:if="${voucher.minOrderAmount != null}" class="text-sm text-gray-600" th:text="${#numbers.formatDecimal(voucher.minOrderAmount, 1, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                    <span th:if="${voucher.minOrderAmount == null}" class="text-sm text-gray-400">Không</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm">
+                                        <span th:text="${voucher.currentUsage}"></span> / <span th:text="${voucher.maxUsage}"></span>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                            <div class="bg-primary-600 h-2 rounded-full"
+                                                th:style="'width: ' + (${voucher.currentUsage} * 100 / ${voucher.maxUsage}) + '%'"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm">
+                                        <div class="text-gray-600" th:text="${#temporals.format(voucher.validFrom, 'dd/MM/yyyy')}"></div>
+                                        <div class="text-gray-600" th:text="${#temporals.format(voucher.validTo, 'dd/MM/yyyy')}"></div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span th:if="${voucher.isActive}" 
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="bi bi-check-circle mr-1"></i>Hoạt động
+                                    </span>
+                                    <span th:if="${!voucher.isActive}" 
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <i class="bi bi-x-circle mr-1"></i>Ngừng
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex items-center gap-2">
+                                        <a th:href="@{/quantri/voucher/sua/{id}(id=${voucher.id})}"
+                                            class="text-primary-600 hover:text-primary-900 transition-colors">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a th:href="@{/quantri/voucher/xoa/{id}(id=${voucher.id})}"
+                                            class="text-red-600 hover:text-red-900 transition-colors"
+                                            onclick="return confirm('Bạn có chắc muốn xóa voucher này?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${vouchers == null || vouchers.isEmpty()}"
+                class="bg-white rounded-lg shadow-sm border border-gray-100 p-12 text-center">
+                <i class="bi bi-inbox text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có voucher nào</h3>
+                <p class="text-gray-500 mb-4">Bắt đầu thêm voucher để quản lý mã giảm giá</p>
+                <a th:href="@{/quantri/voucher/them}"
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                    <i class="bi bi-plus-circle mr-1"></i>Thêm Voucher đầu tiên
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

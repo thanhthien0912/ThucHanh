@@ -46,10 +46,18 @@ public class BookController {
      */
     @GetMapping({ "", "/" })
     public String listBooks(Model model) {
+        List<Book> books = bookRepository.findAll();
+
+        // Tính tổng số lượng tồn kho
+        int totalStock = books.stream()
+                .mapToInt(book -> book.getStock() != null ? book.getStock() : 0)
+                .sum();
+
         model.addAttribute("pageTitle", "Quản lý Sách");
         model.addAttribute("currentPage", "sach");
-        model.addAttribute("books", bookRepository.findAll());
+        model.addAttribute("books", books);
         model.addAttribute("totalBooks", bookRepository.count());
+        model.addAttribute("totalStock", totalStock);
         return "sach/index";
     }
 
@@ -64,8 +72,15 @@ public class BookController {
 
         List<Book> searchResults = bookRepository
                 .findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(q, q);
+
+        // Tính tổng số lượng tồn kho trong kết quả tìm kiếm
+        int totalStock = searchResults.stream()
+                .mapToInt(book -> book.getStock() != null ? book.getStock() : 0)
+                .sum();
+
         model.addAttribute("books", searchResults);
         model.addAttribute("totalBooks", searchResults.size());
+        model.addAttribute("totalStock", totalStock);
 
         return "sach/index";
     }

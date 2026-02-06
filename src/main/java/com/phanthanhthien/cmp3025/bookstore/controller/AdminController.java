@@ -3,6 +3,7 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.CategoryRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.UserRepository;
+import com.phanthanhthien.cmp3025.bookstore.repository.VoucherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * AdminController - Quản trị hệ thống
- * 
+ *
  * @author Phan Thanh Thien
  * @version 1.0.0
  */
@@ -25,6 +26,9 @@ public class AdminController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VoucherRepository voucherRepository;
 
     /**
      * Trang quản lý ngườ dùng
@@ -50,6 +54,7 @@ public class AdminController {
         model.addAttribute("totalCategories", categoryRepository.count());
         model.addAttribute("totalOrders", 0); // Sẽ cập nhật sau
         model.addAttribute("totalUsers", userRepository.count());
+        model.addAttribute("totalVouchers", voucherRepository.count());
 
         return "admin/dashboard";
     }

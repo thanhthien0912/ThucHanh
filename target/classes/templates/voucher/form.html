@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="~{layout :: head}"></th:block>
+    <title th:text="${pageTitle}">Thêm Voucher</title>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header th:replace="~{layout :: header}"></header>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="flex-grow-1">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Breadcrumb -->
+            <nav class="text-sm mb-6">
+                <ol class="flex items-center gap-2">
+                    <li><a th:href="@{/}" class="text-gray-500 hover:text-gray-700">Trang chủ</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li><a th:href="@{/quantri/voucher}" class="text-gray-500 hover:text-gray-700">Quản lý Voucher</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-primary-600 font-medium" th:text="${isEdit} ? 'Sửa Voucher' : 'Thêm Voucher'">Thêm Voucher</li>
+                </ol>
+            </nav>
+
+            <!-- Header -->
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+                <i class="bi bi-plus-circle mr-2" th:if="!${isEdit}"></i>
+                <i class="bi bi-pencil mr-2" th:if="${isEdit}"></i>
+                <span th:text="${isEdit} ? 'Sửa Voucher' : 'Thêm Voucher mới'">Thêm Voucher mới</span>
+            </h2>
+
+            <!-- Alert Messages -->
+            <div th:if="${errorMessage}"
+                class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-6 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'"
+                        class="text-red-700 hover:text-red-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Validation Errors -->
+            <div th:if="${#fields.hasErrors('*')}"
+                class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-6 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span>Vui lòng kiểm tra lại các thông tin bắt buộc!</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.style.display='none'"
+                        class="text-red-700 hover:text-red-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <ul class="mt-2 ml-8 list-disc text-sm">
+                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-100 max-w-2xl">
+                <div class="p-6">
+                    <form th:action="${isEdit} ? @{/quantri/voucher/sua/{id}(id=${voucher.id})} : @{/quantri/voucher/them}"
+                          th:object="${voucher}" method="post" class="space-y-6">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div>
+                            <label for="code" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Mã Voucher <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="code" name="code"
+                                   th:value="${voucher.code}" placeholder="VD: WELCOME10" required>
+                            <p class="text-xs text-gray-500 mt-1">Mã voucher sẽ được người dùng nhập để áp dụng giảm giá</p>
+                            <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></div>
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Mô tả</label>
+                            <textarea class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none" id="description" name="description"
+                                      rows="2" placeholder="VD: Giảm 10% cho đơn hàng đầu tiên" th:field="*{description}"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="discountPercent" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Phần trăm giảm giá <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="discountPercent" name="discountPercent"
+                                       th:value="${voucher.discountPercent}" min="1" max="99" step="0.01" placeholder="VD: 10" required>
+                                <p class="text-xs text-gray-500 mt-1">1 - 99%</p>
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('discountPercent')}" th:errors="*{discountPercent}"></div>
+                            </div>
+
+                            <div>
+                                <label for="maxDiscountAmount" class="block text-sm font-semibold text-gray-700 mb-2">Giảm tối đa (đ)</label>
+                                <input type="number" class="w-full px-4 py-2.2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="maxDiscountAmount" name="maxDiscountAmount"
+                                       th:value="${voucher.maxDiscountAmount}" min="0" step="1000" placeholder="VD: 100000">
+                                <p class="text-xs text-gray-500 mt-1">0 = Không giới hạn</p>
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('maxDiscountAmount')}" th:errors="*{maxDiscountAmount}"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="minOrderAmount" class="block text-sm font-semibold text-gray-700 mb-2">Giá trị đơn hàng tối thiểu (đ)</label>
+                            <input type="number" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="minOrderAmount" name="minOrderAmount"
+                                   th:value="${voucher.minOrderAmount}" min="0" step="1000" placeholder="VD: 50000">
+                            <p class="text-xs text-gray-500 mt-1">0 = Không yêu cầu</p>
+                            <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('minOrderAmount')}" th:errors="*{minOrderAmount}"></div>
+                        </div>
+
+                        <div>
+                            <label for="maxUsage" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Số lần sử dụng tối đa <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="maxUsage" name="maxUsage"
+                                   th:value="${voucher.maxUsage}" min="1" placeholder="VD: 1000" required>
+                            <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('maxUsage')}" th:errors="*{maxUsage}"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="validFrom" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ngày bắt đầu <span class="text-red-500">*</span>
+                                </label>
+                                <input type="datetime-local" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="validFrom"
+                                       th:value="${voucher.validFrom != null ? #temporals.format(voucher.validFrom, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                                       name="validFrom"
+                                       required>
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('validFrom')}" th:errors="*{validFrom}"></div>
+                            </div>
+
+                            <div>
+                                <label for="validTo" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Ngày kết thúc <span class="text-red-500">*</span>
+                                </label>
+                                <input type="datetime-local" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" id="validTo"
+                                       th:value="${voucher.validTo != null ? #temporals.format(voucher.validTo, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                                       name="validTo"
+                                       required>
+                                <div class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('validTo')}" th:errors="*{validTo}"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" id="isActive" name="isActive"
+                                   th:checked="${voucher.isActive}" value="true">
+                            <label for="isActive" class="ml-2 text-sm font-medium text-gray-700">Kích hoạt voucher</label>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3">
+                            <button type="submit" class="inline-flex items-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all">
+                                <i class="bi bi-save mr-1"></i>
+                                <span th:text="${isEdit} ? 'Cập nhật' : 'Lưu Voucher'">Lưu Voucher</span>
+                            </button>
+                            <a th:href="@{/quantri/voucher}" class="inline-flex items-center px-6 py-2.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all">
+                                <i class="bi bi-x-circle mr-1"></i>Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <th:block th:insert="~{layout :: scripts}"></th:block>
+
+</body>
+</html>

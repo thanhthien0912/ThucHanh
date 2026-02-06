@@ -1,6 +1,8 @@
 package com.phanthanhthien.cmp3025.bookstore.services;
 
+import com.phanthanhthien.cmp3025.bookstore.entities.Book;
 import com.phanthanhthien.cmp3025.bookstore.entities.Order;
+import com.phanthanhthien.cmp3025.bookstore.repository.BookRepository;
 import com.phanthanhthien.cmp3025.bookstore.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -48,6 +51,9 @@ public class MomoPaymentService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -58,7 +64,14 @@ public class MomoPaymentService {
             // Tạo orderId duy nhất bằng cách thêm timestamp để tránh trùng lặp
             String orderId = order.getId() + "_" + System.currentTimeMillis();
             String requestId = UUID.randomUUID().toString();
-            String amount = String.valueOf(order.getTotalAmount().longValue());
+            // Sử dụng finalAmount (sau khi giảm giá), nếu không có thì dùng totalAmount
+            BigDecimal paymentAmount = order.getFinalAmount() != null
+                    ? order.getFinalAmount()
+                    : order.getTotalAmount();
+            String amount = String.valueOf(paymentAmount.longValue());
+
+            logger.info("💰 Số tiền thanh toán MoMo: {} (Total: {}, Final: {})",
+                    paymentAmount, order.getTotalAmount(), order.getFinalAmount());
             String orderInfo = "Thanh toán đơn hàng #" + orderId;
             String requestType = "payWithMethod";
             String extraData = "";
@@ -140,6 +153,33 @@ public class MomoPaymentService {
                 order.setPaymentStatus("SUCCESS");
                 order.setMomoTransId(transId);
                 order.setPaidAt(LocalDateTime.now());
+
+                // Giảm số lượng tồn kho
+                try {
+                    for (var item : order.getItems()) {
+                        Book book = bookRepository.findById(item.getBookId()).orElse(null);
+                        if (book != null) {
+                            int currentStock = book.getStock() != null ? book.getStock() : 0;
+                            int quantity = item.getQuantity() != null ? item.getQuantity() : 1;
+                            int newStock = currentStock - quantity;
+
+                            if (newStock < 0) {
+                                logger.warn("⚠️ Số lượng tồn kho âm cho sách ID {}: {} -> {}",
+                                        book.getId(), currentStock, newStock);
+                                newStock = 0;
+                            }
+
+                            book.setStock(newStock);
+                            bookRepository.save(book);
+
+                            logger.info("📦 Giảm tồn kho - Sách ID {}: {} -> {}",
+                                    book.getId(), currentStock, newStock);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.error("❌ Lỗi khi giảm tồn kho: {}", e.getMessage());
+                }
+
                 logger.info("✅ Thanh toán thành công cho đơn hàng: {}", orderId);
             } else {
                 // Thanh toán thất bại

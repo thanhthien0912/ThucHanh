@@ -2,7 +2,11 @@ package com.phanthanhthien.cmp3025.bookstore.controller;
 
 import com.phanthanhthien.cmp3025.bookstore.entities.Order;
 import com.phanthanhthien.cmp3025.bookstore.repository.OrderRepository;
+import com.phanthanhthien.cmp3025.bookstore.services.ExcelExportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,9 @@ public class AdminOrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     /**
      * Danh sách tất cả đơn hàng
@@ -111,5 +118,28 @@ public class AdminOrderController {
             case "CANCELLED" -> "Đã hủy";
             default -> status;
         };
+    }
+
+    /**
+     * Xuất danh sách đơn hàng ra Excel
+     */
+    @GetMapping("/xuat-excel")
+    public ResponseEntity<byte[]> exportOrdersToExcel() {
+        try {
+            byte[] excelBytes = excelExportService.exportOrdersToExcel();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData(
+                    "attachment",
+                    java.net.URLEncoder.encode("danh-sach-don-hang.xlsx", java.nio.charset.StandardCharsets.UTF_8)
+            );
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelBytes);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

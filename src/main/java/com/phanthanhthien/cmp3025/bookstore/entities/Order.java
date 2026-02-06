@@ -32,6 +32,20 @@ public class Order {
 
     private String orderStatus; // PENDING, PROCESSING, SHIPPED, COMPLETED, CANCELLED
 
+    private String receiverName;
+
+    private String receiverPhone;
+
+    private String receiverAddress;
+
+    private String voucherId;
+
+    private String voucherCode;
+
+    private BigDecimal discountAmount;
+
+    private BigDecimal finalAmount;
+
     private String momoTransId;
 
     private String momoRequestId;
@@ -159,5 +173,61 @@ public class Order {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getVoucherId() {
+        return voucherId;
+    }
+
+    public void setVoucherId(String voucherId) {
+        this.voucherId = voucherId;
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
+    }
+
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getReceiverAddress() {
+        return receiverAddress;
+    }
+
+    public void setReceiverAddress(String receiverAddress) {
+        this.receiverAddress = receiverAddress;
     }
 }

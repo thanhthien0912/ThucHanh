@@ -152,6 +152,11 @@
                         <span sec:authorize="hasRole('ADMIN')"
                             class="ml-1 px-2 py-0.5 bg-warning-500 text-white text-xs rounded-full font-medium">ADMIN</span>
                     </span>
+                    <a th:href="@{/user/orders}"
+                        class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all"
+                        sec:authorize="!hasRole('ADMIN')">
+                        <i class="bi bi-receipt-cutoff mr-1"></i>Đơn hàng
+                    </a>
                     <a th:href="@{/dangxuat}"
                         class="px-3 py-1.5 text-primary-100 border border-primary-400 rounded-md hover:bg-primary-700 transition-all">
                         <i class="bi bi-box-arrow-right mr-1"></i>Đăng xuất
@@ -232,6 +237,10 @@
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="bi bi-bag-check mr-2"></i>Quản lý Đơn hàng
                                 </a>
+                                <a th:href="@{/quantri/voucher}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-ticket-perforated mr-2"></i>Quản lý Voucher
+                                </a>
                                 <a th:href="@{/nguoidung}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="bi bi-people mr-2"></i>Quản lý Người dùng
@@ -285,6 +294,11 @@
                         sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
                         <i class="bi bi-cart3 mr-2"></i>Giỏ hàng
                     </a>
+                    <a th:href="@{/user/orders}"
+                        class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50"
+                        sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
+                        <i class="bi bi-receipt-cutoff mr-2"></i>Đơn hàng của tôi
+                    </a>
 
                     <!-- Admin menu on mobile -->
                     <div sec:authorize="hasRole('ADMIN')">
@@ -293,6 +307,10 @@
                         <a th:href="@{/quantri/donhang}"
                             class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
                             <i class="bi bi-bag-check mr-2"></i>Quản lý Đơn hàng
+                        </a>
+                        <a th:href="@{/quantri/voucher}"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">
+                            <i class="bi bi-ticket-perforated mr-2"></i>Quản lý Voucher
                         </a>
                         <a th:href="@{/nguoidung}"
                             class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-primary-50">

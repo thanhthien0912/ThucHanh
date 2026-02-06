@@ -71,10 +71,14 @@
             </div>
 
             <!-- Statistics -->
-            <div class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-primary-600 text-white rounded-lg p-6">
-                    <h5 class="text-sm font-medium opacity-90 mb-1">Tổng số sách</h5>
+                    <h5 class="text-sm font-medium opacity-90 mb-1">Tổng số đầu sách</h5>
                     <h3 class="text-3xl font-bold" th:text="${totalBooks}">0</h3>
+                </div>
+                <div class="bg-green-600 text-white rounded-lg p-6">
+                    <h5 class="text-sm font-medium opacity-90 mb-1">Tổng số lượng tồn kho</h5>
+                    <h3 class="text-3xl font-bold" th:text="${totalStock} + ' cuốn'">0 cuốn</h3>
                 </div>
             </div>
 
